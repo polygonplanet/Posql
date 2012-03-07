@@ -15,3 +15,7 @@ PEAR::DB, PEAR::MDB2, CakePHP 用ドライバがあり PDO と互換性がある
 ドキュメントやリファレンスは 
 <http://posql.org/> 
 から参照ください。
+
+-----
+作成中: <http://polygonplanet.github.com/Posql/>
+
