@@ -8,13 +8,10 @@
 define('POSQL_PATH', '../src/posql.php');
 
 // posql project page's url (Japanese)
-//#####
-//TODO: use https://github.com/polygonplanet/Posql
-//#####
-define('POSQL_PROJECT_JP_URL', 'http://sourceforge.jp/projects/posql/');
+define('POSQL_PROJECT_JP_URL', 'http://polygonplanet.github.com/Posql/');
 
 // posql project page's url (English)
-define('POSQL_PROJECT_EN_URL', 'http://sourceforge.net/projects/posql/');
+define('POSQL_PROJECT_EN_URL', 'http://polygonplanet.github.com/Posql/en/');
 
 // posql index catalog list url (Japanese)
 define('POSQL_CATALOG_JP_URL', 'http://feel.happy.nu/doc/posql/');
@@ -25,9 +22,10 @@ define('POSQL_CATALOG_EN_URL', 'http://feel.happy.nu/doc/posql/en/');
 //    }}} 
 //    {{{ configuration
 
-// Maximizes the error report.
-defined('E_STRICT') or define('E_STRICT', 2048);
-error_reporting(E_ALL | E_STRICT); // including E_STRICT
+// Settings the error report.
+defined('E_STRICT')     or define('E_STRICT',     2048);
+defined('E_DEPRECATED') or define('E_DEPRECATED', 8192);
+error_reporting(E_ALL & ~E_STRICT & ~E_DEPRECATED);
 @ini_set('display_errors', 1);
 
 // send Content-Type header
@@ -59,7 +57,7 @@ if ($posql->isError()) {
 caption {font-weight     : bold}
 a       {text-decoration : underline}
 a:hover {text-decoration : none}
-.sub    {font-size: 80%}
+.sub    {font-size       : 80%}
 </style>
 </head>
 <body>
