@@ -1,7 +1,8 @@
 Posql
 =====
 
-Posql is a tiny text-base database engine (DBMS) written by pure PHP that does not need any additional extension library,
+Posql is a tiny text-base database engine (DBMS) written by pure PHP that
+does not need any additional extension library,
 it is designed compatible with SQL-92,
 and only uses all-in-one file as database.
 
