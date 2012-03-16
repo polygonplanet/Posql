@@ -20,3 +20,78 @@ PEAR::DB, PEAR::MDB2, CakePHP 用ドライバがあり PDO と互換性がある
 -----
 作成中: <http://polygonplanet.github.com/Posql/>
 
+Example
+====
+
+    require_once 'posql.php';
+    $posql = new Posql;
+    
+    // Using SQL-99 Syntax
+    $sql = <<<SQL
+    SELECT
+        SUBSTRING(UPPER(g.a) FROM 1 FOR 1) A,
+        TRIM(LEADING LOWER('hOG') FROM g.a) B,
+        CASE g.b WHEN 'xox' THEN 'x'
+                 WHEN 'lol' THEN 'l'
+                 ELSE '?'
+        END AS C,
+        TRIM(TRAILING 'ol' FROM g.b) D,
+        TRIM(BOTH 'l' FROM g.b) E,
+        SUBSTRING(g.c FROM 4 FOR 1) F,
+        UPPER(
+            TRIM(
+                BOTH '^'
+                FROM SUBSTRING(g.d FROM 2 FOR 3)
+            )
+        ) G,
+        SUBSTRING(
+            g.a
+            FROM ((BIT_LENGTH(g.d) - BIT_LENGTH(g.a)) DIV 4)
+            FOR CHAR_LENGTH(g.a) - CHAR_LENGTH(g.e)
+        ) H,
+        SUBSTRING(g.e FROM -1) I,
+        CASE WHEN g.a = 1            THEN 'a'
+             WHEN g.b = 2            THEN 'b'
+             WHEN g.c IS NULL        THEN 'c'
+             WHEN g.d NOT LIKE '%x%' THEN 'l'
+             WHEN g.e LIKE '.w.'     THEN 'm'
+             ELSE '?'
+        END J,
+        LOWER(
+            SUBSTRING(
+                g.c
+                FROM -1
+            )
+        ) K
+    FROM (
+        SELECT a, b, c, d, e
+        FROM (
+            SELECT
+                'hoge' AS a,
+                'lol'  AS b,
+                '1 + 0xF1AF0D' AS c,
+                '(^w^)' AS d,
+                'bar'  AS e
+            UNION
+            SELECT 1 a, 2 b, 3 c, 4 d, 5 e
+        ) AS f
+        WHERE a LIKE '%o%'
+    ) AS g
+    LIMIT 1 OFFSET 0
+    SQL;
+
+    $stmt = $posql->query($sql);
+    print $stmt->fetchAll('htmltable');
+
+Results
+====
+
+1 Record.
+
+        +---+---+---+---+---+---+---+---+---+---+---+
+        | A | B | C | D | E | F | G | H | I | J | K |
+        +---+---+---+---+---+---+---+---+---+---+---+
+        | H | e | l | l | o |   | W | o | r | l | d |
+        +---+---+---+---+---+---+---+---+---+---+---+
+
+
