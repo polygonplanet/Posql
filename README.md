@@ -92,3 +92,8 @@ print $stmt->fetchAll('htmltable');
         | H | e | l | l | o |   | W | o | r | l | d |
         +---+---+---+---+---+---+---+---+---+---+---+
 ```
+
+## License
+
+This software is licensed under a dual license system ([MIT](LICENSE-MIT) or [GPL v2](LICENSE-GPLv2)).
+This means you are free to choose with which of both licenses (MIT or GPL v2) you want to use this library.
