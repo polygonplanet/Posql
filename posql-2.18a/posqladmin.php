@@ -247,13 +247,13 @@ class PosqlAdmin {
           switch ($m) {
             case 'save':
                 $e = false;
-                if ($posql != null 
-                 && !$this->mem->saveAsPrivate('posql', $posql)) 
+                if ($posql != null
+                 && !$this->mem->saveAsPrivate('posql', $posql))
                 {
                   $e = $this->setStatus('"Posql ファイルパス"'
                                       . ' の保存に失敗!', true);
                 }
-                if (!$this->isEnablePosqlFile($posql)) 
+                if (!$this->isEnablePosqlFile($posql))
                 {
                   $e = $this->setStatus('"Posql ファイルパス"'
                                       . ' 無効なファイルです!', true);
@@ -261,8 +261,8 @@ class PosqlAdmin {
                 if (!$e) {
                   $this->hideWarnMsg = true;
                 }
-                if ($mode != null 
-                 && !$this->mem->saveAsPrivate('mode', $mode)) 
+                if ($mode != null
+                 && !$this->mem->saveAsPrivate('mode', $mode))
                 {
                   $e = $this->setStatus('"SQL Engine" の保存に失敗!', true);
                 }
@@ -278,33 +278,33 @@ class PosqlAdmin {
                 }
                 else if ($help == null
                       && $this->mem->countAsPrivate('help')
-                      && !$this->mem->deleteAsPrivate('help')) 
+                      && !$this->mem->deleteAsPrivate('help'))
                 {
                   $e = $this->setStatus('"Help" の削除に失敗!', true);
                 }
-                if (!$this->mem->saveAsPrivate('dl', $dl)) 
+                if (!$this->mem->saveAsPrivate('dl', $dl))
                 {
                   $e = $this->setStatus('"Download" の保存に失敗!', true);
                 }
-                if ($css != null 
-                 && !$this->mem->saveAsPrivate('css', $css)) 
+                if ($css != null
+                 && !$this->mem->saveAsPrivate('css', $css))
                 {
                   $e = $this->setStatus('"CSS" の保存に失敗!', true);
                 }
                 else if ($css == null
                       && $this->mem->countAsPrivate('css')
-                      && !$this->mem->deleteAsPrivate('css')) 
+                      && !$this->mem->deleteAsPrivate('css'))
                 {
                   $e = $this->setStatus('"CSS" の削除に失敗!', true);
                 }
-                if ($js != null 
-                 && !$this->mem->saveAsPrivate('js', $js)) 
+                if ($js != null
+                 && !$this->mem->saveAsPrivate('js', $js))
                 {
                   $e = $this->setStatus('"JavaScript" の保存に失敗!', true);
                 }
                 else if ($js == null
                       && $this->mem->countAsPrivate('js')
-                      && !$this->mem->deleteAsPrivate('js')) 
+                      && !$this->mem->deleteAsPrivate('js'))
                 {
                   $e = $this->setStatus('"JavaScript" の削除に失敗!', true);
                 }
@@ -316,7 +316,7 @@ class PosqlAdmin {
                       'ps' => $new_ps
                     )
                   )
-                ) 
+                )
                 {
                   $this->isLogin = $this->generateKey($new_id, $new_ps);
                 }
@@ -676,8 +676,8 @@ class PosqlAdmin {
     $id = $this->getPost('login_id', false);
     $ps = $this->getPost('login_ps', false);
     if (($auth !== false)
-     ||   ($id !== false 
-        && $ps !== false)) 
+     ||   ($id !== false
+        && $ps !== false))
     {
       $act = (array) $this->mem->loadAsPrivate('account');
       $aid = (string) $this->getValue($act, 'id');
@@ -689,7 +689,7 @@ class PosqlAdmin {
       && $this->encrypt($id) === $aid
       && $this->encrypt($ps) === $aps)
       || ($auth !== false
-       && $auth === $key)) 
+       && $auth === $key))
     {
       $this->setLastLogin(!$auth);
       if (!$auth) {
@@ -1081,8 +1081,8 @@ class PosqlAdmin {
                 $result = '[' . implode(',', $items) . ']';
               } else {
                 foreach ($var as $key => $val) {
-                  $items[] = $this->encodeJSON($key) 
-                           . ':' 
+                  $items[] = $this->encodeJSON($key)
+                           . ':'
                            . $this->encodeJSON($val);
                 }
                 $result = '{' . implode(',', $items) . '}';
@@ -1320,7 +1320,7 @@ class PosqlAdmin {
 
 
   function optimizeDatabase(){
-    static $mask = 
+    static $mask =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
     $result = false;
     $this->optimizeLines = array();
@@ -1751,7 +1751,7 @@ class PosqlAdmin {
      echo $this->charset; ?>">
     <meta http-equiv="Pragma" content="no-cache">
     <meta name="robots" content="noindex,nofollow">
-    <title><?php echo $this->title; ?></title><?php 
+    <title><?php echo $this->title; ?></title><?php
      echo $css;
     ?></head>
     <body id="doc">
@@ -1779,7 +1779,7 @@ class PosqlAdmin {
         o = this;
       }
       if (o && c)
-        for (var p in c) 
+        for (var p in c)
           o[p] = c[p];
       return o;
     };
@@ -1953,7 +1953,7 @@ class PosqlAdmin {
           return {
             mx: mx,
             my: my,
-            x: x, 
+            x: x,
             y: y
           };
         }
@@ -2095,7 +2095,7 @@ class PosqlAdmin {
           };
           if (m == "POST")
             x.setRequestHeader(
-              "Content-Type", 
+              "Content-Type",
               "application/x-www-form-urlencoded"
             );
           x.send(a);
@@ -2214,7 +2214,7 @@ class PosqlAdmin {
           <span>ようこそ！ <?php echo $this->className; ?> 管理ページへ</span>
           <br>
           <span>id: <?php
-              echo $u ? $this->escape($u) 
+              echo $u ? $this->escape($u)
                       : '<span class="error">(id が未設定です)</span>';
           ?></span><br>
           <p>
@@ -2298,10 +2298,10 @@ class PosqlAdmin {
                 <?php
                 $captions = array(
                   0 => 'no',
-                  1 => 'id', 
-                  2 => 'date', 
-                  3 => 'service', 
-                  4 => 'type', 
+                  1 => 'id',
+                  2 => 'date',
+                  3 => 'service',
+                  4 => 'type',
                   5 => 'result',
                   6 => 'ip',
                   7 => 'carrier'
@@ -3022,7 +3022,7 @@ class PosqlAdmin {
               ?></textarea>
             </div>
             <div>
-              <input type="submit" value="Download" 
+              <input type="submit" value="Download"
                      title="ダンプ結果のSQLテキストをダウンロード">
             </div>
           </fieldset>
@@ -3505,7 +3505,7 @@ class PosqlAdmin {
         urlencode($dir)
       );
     }
-    
+
     ?>
     <div id="create_db_result">
       <fieldset>
@@ -3843,7 +3843,7 @@ class PosqlAdmin {
       var e, t = $("tableinfo");
       if (t.hasChildNodes()) {
         t = t.firstChild;
-        do 
+        do
           if (t.tagName == "FIELDSET")
             break;
         while (t = t.nextSibling);
@@ -4272,7 +4272,7 @@ class PosqlAdmin {
             if (col) {
               var colName = $.trim( $.val(col) );
               if (colName != "rowid" &&
-                  colName != "ctime" && 
+                  colName != "ctime" &&
                   colName != "utime") {
                 if (edit.style.display == "none") {
                   $.val( update, $.val( data ) );
