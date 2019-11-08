@@ -117,8 +117,8 @@ class Posql_UTF8 {
  * @access private
  */
  function _referProperty(&$posql){
-   $this->charset          = & $posql->charset;
-   $this->pcharset         = & $posql->pcharset;
+   $this->charset = & $posql->charset;
+   $this->pcharset = & $posql->pcharset;
    $this->supportsUTF8PCRE = & $posql->supportsUTF8PCRE;
  }
 
@@ -132,9 +132,11 @@ class Posql_UTF8 {
  function init(){
    if (empty($this->_inited)) {
      $this->hasMBString = false;
-     $this->hasIConv    = false;
-     $this->isPHP5      = version_compare(PHP_VERSION, 5, '>=');
-     $this->isPHP520    = version_compare(PHP_VERSION, '5.2.0', '>=');
+     $this->hasIConv = false;
+     $this->isPHP5 = version_compare(PHP_VERSION, 5, '>=');
+     $this->isPHP520 = version_compare(PHP_VERSION, '5.2.0', '>=');
+     $this->isPHP560 = version_compare(PHP_VERSION, '5.6.0', '>=');
+
      if (extension_loaded('mbstring') && function_exists('mb_strlen')
       && function_exists('mb_strpos') && function_exists('mb_strrpos')
       && function_exists('mb_substr') && function_exists('mb_strtolower')
@@ -142,6 +144,7 @@ class Posql_UTF8 {
       && function_exists('mb_internal_encoding')) {
        $this->hasMBString = true;
      }
+
      if (extension_loaded('iconv') && function_exists('iconv_strlen')
       && function_exists('iconv_strpos') && function_exists('iconv_strrpos')
       && function_exists('iconv_get_encoding')
@@ -223,7 +226,9 @@ class Posql_UTF8 {
      $this->prevMBStringEncoding = mb_internal_encoding();
      mb_internal_encoding('UTF-8');
    }
-   if ($this->hasIConv) {
+
+   if ($this->hasIConv && !$this->isPHP560) {
+     // iconv.internal_encoding is deprecated in PHP 5.6.0
      $this->prevIConvEncoding = iconv_get_encoding('internal_encoding');
      iconv_set_encoding('internal_encoding', 'UTF-8');
    }
@@ -241,7 +246,8 @@ class Posql_UTF8 {
      mb_internal_encoding($this->prevMBStringEncoding);
      $this->prevMBStringEncoding = null;
    }
-   if ($this->hasIConv && $this->prevIConvEncoding != null) {
+
+   if ($this->hasIConv && $this->prevIConvEncoding != null && !$this->isPHP560) {
      iconv_set_encoding('internal_encoding', $this->prevIConvEncoding);
      $this->prevIConvEncoding = null;
    }
@@ -296,7 +302,7 @@ class Posql_UTF8 {
  *
  * @see    strrpos
  * @param  string   the entire string.
- * @param  string   the searched substring. 
+ * @param  string   the searched substring.
  * @param  number   optionally, the offset of the search position from the end
  * @return number   the numeric position of the first occurrence, or FALSE
  * @access public
@@ -484,7 +490,7 @@ class Posql_UTF8 {
            if ($offset_x) {
              $offset_pattern = '(?:.{65535}){' . $offset_x . '}';
            }
-           $offset_pattern = '^(?:' . $offset_pattern 
+           $offset_pattern = '^(?:' . $offset_pattern
                            . '.{' . $offset_y . '})';
          } else {
            $offset_pattern = '^';
