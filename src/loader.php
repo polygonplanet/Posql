@@ -6,9 +6,9 @@ if ((int)PHP_VERSION < 5) {
  * @name Posql_Loader
  *
  * Posql:
- *   The tiny text-base database engine (DBMS) written by pure PHP 
- *   that does not need any additional extension library, 
- *   it is designed compatible with SQL-92, 
+ *   The tiny text-base database engine (DBMS) written by pure PHP
+ *   that does not need any additional extension library,
+ *   it is designed compatible with SQL-92,
  *   and only uses all-in-one file as database.
  *
  * Loader:
@@ -18,7 +18,7 @@ if ((int)PHP_VERSION < 5) {
  *
  * @package    Posql
  * @subpackage Loader
- * @author     polygon planet <polygon.planet@gmail.com>
+ * @author     polygon planet <polygon.planet.aqua@gmail.com>
  * @link       http://sourceforge.jp/projects/posql/
  * @link       http://sourceforge.net/projects/posql/
  * @license    Dual licensed under the MIT and GPL licenses

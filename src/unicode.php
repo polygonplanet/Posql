@@ -7,7 +7,7 @@ require_once dirname(__FILE__) . '/utf8.php';
  * This class is a library to handle the basic string functions as Unicode
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet@gmail.com>
+ * @author    polygon planet <polygon.planet.aqua@gmail.com>
  *---------------------------------------------------------------------------*/
 class Posql_Unicode extends Posql_UTF8 {
 
@@ -18,7 +18,7 @@ class Posql_Unicode extends Posql_UTF8 {
  * @return Posql_Unicode
  * @access public
  */
- function Posql_Unicode(){
+ function __construct() {
    $this->init();
  }
 

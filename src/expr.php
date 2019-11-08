@@ -7,7 +7,7 @@ require_once dirname(__FILE__) . '/builder.php';
  * This class processes the expression on WHERE, HAVING, ON, etc. mode
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet@gmail.com>
+ * @author    polygon planet <polygon.planet.aqua@gmail.com>
  *---------------------------------------------------------------------------*/
 class Posql_Expr extends Posql_Builder {
 /**
@@ -694,7 +694,7 @@ class Posql_Expr extends Posql_Builder {
                          $corr_org = $this->restoreTableAliasName($corr_dot);
                          if ($corr_dot !== $corr_org
                           && strpos($corr_org, '.') !== false) {
-                           list($corr_name, $varname) = explode('.', 
+                           list($corr_name, $varname) = explode('.',
                                                                 $corr_org);
                          }
                          if (!empty($this->_subSelectJoinUniqueNames)) {
@@ -1262,7 +1262,7 @@ class Posql_Expr extends Posql_Builder {
    }
    return $result;
  }
- 
+
 
 /**
  * Executes the expression on HAVING clause

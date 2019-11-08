@@ -25,7 +25,7 @@ require_once dirname(__FILE__) . '/config.php';
  * @link     http://php.net/ctype
  * @link     http://www.pcre.org/pcre.txt
  * @package  Posql
- * @author   polygon planet <polygon.planet@gmail.com>
+ * @author   polygon planet <polygon.planet.aqua@gmail.com>
  *---------------------------------------------------------------------------*/
 class Posql_CType {
 
@@ -42,7 +42,7 @@ class Posql_CType {
  * @return Posql_CType
  * @access public
  */
- function Posql_CType(){
+ function __construct() {
    $this->hasCType = extension_loaded('ctype');
  }
 

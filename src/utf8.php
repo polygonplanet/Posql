@@ -12,7 +12,7 @@ require_once dirname(__FILE__) . '/charset.php';
  *  (In this case, the execution speed might be slow)
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet@gmail.com>
+ * @author    polygon planet <polygon.planet.aqua@gmail.com>
  *---------------------------------------------------------------------------*/
 class Posql_UTF8 {
 
@@ -90,7 +90,7 @@ class Posql_UTF8 {
  * @return Posql_UTF8
  * @access public
  */
- function Posql_UTF8(){
+ function __construct() {
    $this->init();
  }
 

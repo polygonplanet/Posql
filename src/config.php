@@ -3,9 +3,9 @@
  * @package Posql
  *
  * Posql:
- *   The tiny text-base database engine (DBMS) written by pure PHP 
- *   that does not need any additional extension library, 
- *   it is designed compatible with SQL-92, 
+ *   The tiny text-base database engine (DBMS) written by pure PHP
+ *   that does not need any additional extension library,
+ *   it is designed compatible with SQL-92,
  *   and only uses all-in-one file as database.
  *
  * Supports the basic SQL-92 and SQL-99 syntax.
@@ -15,7 +15,7 @@
  *
  * PHP versions 4 and 5
  *
- * @author    polygon planet <polygon.planet@gmail.com>
+ * @author    polygon planet <polygon.planet.aqua@gmail.com>
  * @link      http://sourceforge.jp/projects/posql/
  * @link      http://sourceforge.net/projects/posql/
  * @license   Dual licensed under the MIT and GPL licenses
@@ -43,7 +43,7 @@
  *               e.g. LOCK=2@0b276c0f
  * ---------------------------------------------------------------------
  *  LOCK MODE:
- * 
+ *
  *   0 : Not locked
  *   1 : Locked for reading (enables reading, disables writing)
  *   2 : Locked for writing (disables reading, and writing)
@@ -79,7 +79,7 @@
  * The class to configure the variables for Posql
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet@gmail.com>
+ * @author    polygon planet <polygon.planet.aqua@gmail.com>
  *---------------------------------------------------------------------------*/
 class Posql_Config {
 
@@ -253,7 +253,7 @@ class Posql_Config {
 
 /**
  * @var    boolean  enables exclusive lock to database.
- *                  This value will dynamically become TRUE 
+ *                  This value will dynamically become TRUE
  *                  when colliding with other processes.
  * @access public
  */
@@ -792,7 +792,7 @@ class Posql_Config {
 
 /**
  * Set value whether to enable exclusive lock.
- * This value will dynamically become TRUE 
+ * This value will dynamically become TRUE
  *  when colliding with other processes.
  *
  * Note:

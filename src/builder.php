@@ -7,7 +7,7 @@ require_once dirname(__FILE__) . '/parser.php';
  * This builder class that assign from tokens for Posql
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet@gmail.com>
+ * @author    polygon planet <polygon.planet.aqua@gmail.com>
  *---------------------------------------------------------------------------*/
 class Posql_Builder extends Posql_Parser {
 
@@ -306,7 +306,7 @@ class Posql_Builder extends Posql_Parser {
      if ($expr === true) {
        $result = array_splice($cross, 0);
      } else {
-       if (!empty($row1) && is_array($row1) 
+       if (!empty($row1) && is_array($row1)
         && !empty($row2) && is_array($row2)) {
          $row1_count  = count($row1);
          $row2_count  = count($row2);
@@ -1196,7 +1196,7 @@ class Posql_Builder extends Posql_Parser {
  }
 
 /**
- * Evaluates the output of two query expressions and 
+ * Evaluates the output of two query expressions and
  * returns only the rows common to each.
  *
  * @param  array   based rows

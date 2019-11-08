@@ -7,7 +7,7 @@ require_once dirname(__FILE__) . '/error.php';
  * The class which collected the file utility for Posql
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet@gmail.com>
+ * @author    polygon planet <polygon.planet.aqua@gmail.com>
  *---------------------------------------------------------------------------*/
 class Posql_File extends Posql_Error {
 /**
@@ -1495,7 +1495,7 @@ class Posql_File extends Posql_Error {
 /**
  * Unlock all tables by using unlock() and unlockAll() methods
  *
- * @param  boolean  whether it compulsorily unlocks 
+ * @param  boolean  whether it compulsorily unlocks
  *                  it regardless of the state of the lock
  * @return boolean  success or not
  * @access private

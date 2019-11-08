@@ -9,7 +9,7 @@ require_once dirname(__FILE__) . '/ctype.php';
  * Will default to the standard PHP integer representation otherwise
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet@gmail.com>
+ * @author    polygon planet <polygon.planet.aqua@gmail.com>
  *---------------------------------------------------------------------------*/
 class Posql_Math {
 
@@ -32,7 +32,7 @@ class Posql_Math {
  * @return Posql_Math
  * @access public
  */
- function Posql_Math(){
+ function __construct() {
    $this->hasbc = extension_loaded('bcmath');
  }
 
@@ -134,7 +134,7 @@ class Posql_Math {
  * @static
  */
  function convertToBase($number, $frombase, $tobase){
-   static $bases = 
+   static $bases =
    '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
    $result = '';
    if (isset($this) && empty($this->_innerCall)) {

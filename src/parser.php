@@ -7,7 +7,7 @@ require_once dirname(__FILE__) . '/file.php';
  * This class token parses SQL syntax, expression and PHP code
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet@gmail.com>
+ * @author    polygon planet <polygon.planet.aqua@gmail.com>
  *---------------------------------------------------------------------------*/
 class Posql_Parser extends Posql_File {
 /**
@@ -187,10 +187,10 @@ class Posql_Parser extends Posql_File {
      ),
      'update' => array(
        'update', 'set', 'where'
-     ), 
+     ),
      'delete' => array(
        'delete', 'from', 'where'
-     ), 
+     ),
      'insert' => array(
        'insert', 'into', 'values', 'select'
      ),
@@ -485,11 +485,11 @@ class Posql_Parser extends Posql_File {
  *
  * compound-operator:
  *  - UNION [ALL] : combine two query expressions into a single result set.
- *                  if ALL is specified, duplicate rows returned by 
+ *                  if ALL is specified, duplicate rows returned by
  *                  union expression are retained.
  *  - EXCEPT      : evaluates the output of two query expressions and
  *                  returns the difference between the results.
- *  - INTERSECT   : evaluates the output of two query expressions and 
+ *  - INTERSECT   : evaluates the output of two query expressions and
  *                  returns only the rows common to each.
  *
  * @param  array   parsed tokens
@@ -2134,11 +2134,11 @@ class Posql_Parser extends Posql_File {
  *
  * compound-operator:
  *  - UNION [ALL] : combine two query expressions into a single result set.
- *                  if ALL is specified, duplicate rows returned by 
+ *                  if ALL is specified, duplicate rows returned by
  *                  union expression are retained.
  *  - EXCEPT      : evaluates the output of two query expressions and
  *                  returns the difference between the results.
- *  - INTERSECT   : evaluates the output of two query expressions and 
+ *  - INTERSECT   : evaluates the output of two query expressions and
  *                  returns only the rows common to each.
  *
  * @param  mixed    SELECT tokens, or statement
@@ -3176,7 +3176,7 @@ class Posql_Parser extends Posql_File {
      $tokens = $this->removeBacktickToken($tokens);
      $open   = '(';
      $close  = ')';
-     while (reset($tokens) === $open 
+     while (reset($tokens) === $open
           && end($tokens) === $close) {
        array_shift($tokens);
        array_pop($tokens);
@@ -3907,7 +3907,7 @@ class Posql_Parser extends Posql_File {
  }
 
 /**
- * Gets the operand from right directive tokens 
+ * Gets the operand from right directive tokens
  *
  * @param  array    the parsed tokens as an array
  * @param  number   the start number of token's index
@@ -3985,7 +3985,7 @@ class Posql_Parser extends Posql_File {
  }
 
 /**
- * Gets the operand from left directive tokens 
+ * Gets the operand from left directive tokens
  *
  * @param  array    the parsed tokens as an array
  * @param  number   the start number of token's index
@@ -4194,7 +4194,7 @@ class Posql_Parser extends Posql_File {
             if ($next === $open) {
               //TODO: parse right operand
               break;
-              
+
               $idx = $i + 1;
               $nest = 0;
               $exprs = array();
@@ -4273,12 +4273,12 @@ class Posql_Parser extends Posql_File {
             // -------------------------------------------------
             //   eq
             // -------------------------------------------------
-            // CASE WHEN expr1 = expr2 THEN NULL ELSE expr1 END 
+            // CASE WHEN expr1 = expr2 THEN NULL ELSE expr1 END
             // -------------------------------------------------
             if ($next === $open) {
               //TODO: parse right operand
               break;
-              
+
               $idx = $i + 1;
               $nest = 0;
               $nf_index = 0;
@@ -4339,10 +4339,10 @@ class Posql_Parser extends Posql_File {
             // --------------------------------------------------
             // SQL99 Syntax
             // --------------------------------------------
-            // CONVERT (char_value target_char_set 
+            // CONVERT (char_value target_char_set
             //          USING form_of_use source_char_name)
             // --------------------------------------------------
-            // TRANSLATE (char_value target_char_set 
+            // TRANSLATE (char_value target_char_set
             //            USING translation_name)
             // --------------------------------------------------
             if ($next === $open) {
@@ -4361,7 +4361,7 @@ class Posql_Parser extends Posql_File {
                       break;
                   case ',':
                       /*
-                      // It will not convert it yet now though 
+                      // It will not convert it yet now though
                       // it might be appropriate to handle as CAST
                       //  when the argument is delimited by the comma
                       //  because it is not so general.
@@ -4405,8 +4405,8 @@ class Posql_Parser extends Posql_File {
             // --------------------------------------
             // SQL99 Syntax
             // --------------------------------------
-            // SUBSTRING (  extraction_string 
-            //      FROM    starting_position 
+            // SUBSTRING (  extraction_string
+            //      FROM    starting_position
             //    [ FOR     length ]
             //    [ COLLATE collation_name ]
             // )
@@ -4452,10 +4452,10 @@ class Posql_Parser extends Posql_File {
             // TRIM (
             //    [
             //      [ {LEADING | TRAILING | BOTH} ]
-            //      [ removal_string ] 
-            //      FROM 
+            //      [ removal_string ]
+            //      FROM
             //    ]
-            //    target_string 
+            //    target_string
             //    [ COLLATE collation_name ]
             // )
             // ------------------------------------------------------------
@@ -4542,10 +4542,10 @@ class Posql_Parser extends Posql_File {
             // --------------------------------------------------------
             // EXTRACT(datepart FROM expression)
             // --------------------------------------------------------
-            // the datepart to be extracted 
+            // the datepart to be extracted
             // (
             //  YEAR, MONTH, DAY, HOUR, MINUTE, SECOND,
-            //  TIMEZONE_HOUR, or TIMEZONE_MINUTE 
+            //  TIMEZONE_HOUR, or TIMEZONE_MINUTE
             // )
             // from an expression
             // --------------------------------------------------------
@@ -4618,8 +4618,8 @@ class Posql_Parser extends Posql_File {
                  //      ELSE default_expr
                  // END
                  // ----------------------------------------------
-                 // ( expr = comparison_expr 
-                 //        ? result_expr 
+                 // ( expr = comparison_expr
+                 //        ? result_expr
                  //        : (...) default_expr )
                  // ----------------------------------------------
                  $stack = array($open, $case_opd, '=');

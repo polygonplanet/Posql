@@ -7,7 +7,7 @@ require_once dirname(__FILE__) . '/cache.php';
  * The base class to scan the tables and optimize statement
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet@gmail.com>
+ * @author    polygon planet <polygon.planet.aqua@gmail.com>
  *---------------------------------------------------------------------------*/
 class Posql_Scan extends Posql_Cache {
 

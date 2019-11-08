@@ -7,7 +7,7 @@ require_once dirname(__FILE__) . '/statement.php';
  * A simple Pager class for client view
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet@gmail.com>
+ * @author    polygon planet <polygon.planet.aqua@gmail.com>
  *---------------------------------------------------------------------------*/
 class Posql_Pager {
 
@@ -90,7 +90,7 @@ class Posql_Pager {
  * @return Posql_Pager
  * @access public
  */
- function Posql_Pager(){
+ function __construct() {
  }
 
 /**

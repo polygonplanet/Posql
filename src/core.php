@@ -7,7 +7,7 @@ require_once dirname(__FILE__) . '/expr.php';
  * The base class to dissociate the methods from PUBLIC and PRIVATE
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet@gmail.com>
+ * @author    polygon planet <polygon.planet.aqua@gmail.com>
  *---------------------------------------------------------------------------*/
 class Posql_Core extends Posql_Expr {
 /**
@@ -287,7 +287,7 @@ class Posql_Core extends Posql_Expr {
      $this->method->_referObject($this);
      if (!$this->isWin) {
        // Note: autoLock should be enabled excluding Windows.
-       //       Because, maybe very slows 
+       //       Because, maybe very slows
        //       when locking database by using mkdir() on Windows.
        // @see $autoLock, setAutoLock, getAutoLock
        $this->autoLock = true;
@@ -1389,7 +1389,7 @@ class Posql_Core extends Posql_Expr {
        }
      }
    }
-   $result = $this->tableName . $this->DELIM_TABLE . $this->encode($add) 
+   $result = $this->tableName . $this->DELIM_TABLE . $this->encode($add)
                                                    . $this->NL;
    if (strlen($result) > $this->MAX) {
      $this->pushError('Over the maximum length');
@@ -1424,7 +1424,7 @@ class Posql_Core extends Posql_Expr {
            break;
      }
    }
-   $result = $this->tableName . $this->DELIM_TABLE . $this->encode($row) 
+   $result = $this->tableName . $this->DELIM_TABLE . $this->encode($row)
                                                    . $this->NL;
    if (strlen($result) > $this->MAX) {
      $this->pushError('Over the maximum length(%.0f)', strlen($result));
@@ -1442,7 +1442,7 @@ class Posql_Core extends Posql_Expr {
  * @access private
  */
  function _upRestoreMap($row){
-   $result = $this->tableName . $this->DELIM_TABLE . $this->encode($row) 
+   $result = $this->tableName . $this->DELIM_TABLE . $this->encode($row)
                                                    . $this->NL;
    return $result;
  }

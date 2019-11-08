@@ -7,7 +7,7 @@ require_once dirname(__FILE__) . '/archive.php';
  * This class provides standard SQL92-99 functions on SQL mode
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet@gmail.com>
+ * @author    polygon planet <polygon.planet.aqua@gmail.com>
  *---------------------------------------------------------------------------*/
 class Posql_Method {
 
@@ -60,7 +60,7 @@ class Posql_Method {
  * @return Posql_Method
  * @access public
  */
- function Posql_Method(){}
+ function __construct() {}
 
 /**
  * Destructor for PHP Version 5+
@@ -374,7 +374,7 @@ class Posql_Method {
 /**
  * Return a pseudo-random integer.
  * Give the minimum value as the first argument,
- *  and give the maximum value as the 2nd argument. 
+ *  and give the maximum value as the 2nd argument.
  * If the argument is omitted,
  *  the number between -9999999999 and +9999999999 will be returned.
  */
@@ -399,7 +399,7 @@ class Posql_Method {
 /**
  * Round off the number of first argument
  *  to the second argument digits to the right of the decimal point.
- * If the first argument is omitted, 0 is assumed. 
+ * If the first argument is omitted, 0 is assumed.
  */
  function round($value = null, $scale = 0){
    $result = null;
@@ -483,7 +483,7 @@ class Posql_Method {
  * Return a substring of input string.
  * If length is omitted then all character through
  *  the end of the string are returned.
- * The left-most substring is number 1. 
+ * The left-most substring is number 1.
  * If length is negative the the first character of the substring is found
  *  by counting from the right rather than the left.
  * If substring is string then characters indices refer
@@ -524,10 +524,10 @@ class Posql_Method {
  *  from both sides of the character string.
  * If no removal string is specified, TRIM removes spaces by default.
  *
- * This function is used to implement the 
+ * This function is used to implement the
  *  "TRIM ([[{LEADING | TRAILING | BOTH}]
  *         [removal_string] FROM]
- *         target_string)" 
+ *         target_string)"
  *  syntax of SQL.
  */
  function trim($direction = 'both', $chars = ' ',

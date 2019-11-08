@@ -5,9 +5,9 @@ require_once dirname(__FILE__) . '/scan.php';
  * @name Posql
  *
  * Posql:
- *   The tiny text-base database engine (DBMS) written by pure PHP 
- *   that does not need any additional extension library, 
- *   it is designed compatible with SQL-92, 
+ *   The tiny text-base database engine (DBMS) written by pure PHP
+ *   that does not need any additional extension library,
+ *   it is designed compatible with SQL-92,
  *   and only uses all-in-one file as database.
  *
  * Supports the basic SQL-92 and SQL-99 syntax.
@@ -18,7 +18,7 @@ require_once dirname(__FILE__) . '/scan.php';
  * PHP versions 4 and 5
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet@gmail.com>
+ * @author    polygon planet <polygon.planet.aqua@gmail.com>
  * @link      http://sourceforge.jp/projects/posql/
  * @link      http://sourceforge.net/projects/posql/
  * @license   Dual licensed under the MIT and GPL licenses
@@ -36,7 +36,7 @@ class Posql extends Posql_Scan {
  * @return void
  * @access public
  */
- function Posql($path = null, $table = null, $fields = array()){
+ function __construct($path = null, $table = null, $fields = array()) {
    $this->init($path);
    if (func_num_args()) {
      $this->open($path, $table, $fields);
@@ -553,7 +553,7 @@ class Posql extends Posql_Scan {
  }
 
 /**
- * Replace the records to table of the database 
+ * Replace the records to table of the database
  * if conflicts to the primary key.
  *
  * This method supports "REPLACE INTO ..." syntax.
@@ -1482,7 +1482,7 @@ class Posql extends Posql_Scan {
  * ------------------------------------------------------------------
  * 1. An optional precision specifier that acts as a cutoff point,
  *    setting a maximum character limit to the string
- * 
+ *
  * 2. A type specifier that says
  *    what type the argument data should be treated as
  * ---------------

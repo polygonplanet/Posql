@@ -31,7 +31,7 @@ require_once dirname(__FILE__) . '/math.php';
  * +----+----------------------
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet@gmail.com>
+ * @author    polygon planet <polygon.planet.aqua@gmail.com>
  *---------------------------------------------------------------------------*/
 class Posql_Charset {
 
@@ -72,12 +72,12 @@ class Posql_Charset {
  * @return Posql_Charset
  * @access public
  */
- function Posql_Charset(){
+ function __construct() {
    $this->hasMBString = extension_loaded('mbstring')
                      && function_exists('mb_detect_encoding');
-   $this->hasIConv    = extension_loaded('iconv');
-   $this->isPHP5      = version_compare(PHP_VERSION, 5, '>=');
-   $this->hasError    = false;
+   $this->hasIConv = extension_loaded('iconv');
+   $this->isPHP5 = version_compare(PHP_VERSION, 5, '>=');
+   $this->hasError = false;
  }
 
 /**
@@ -572,7 +572,7 @@ class Posql_Charset {
  }
 
 /**
- * Detects the encoding to using the iconv library 
+ * Detects the encoding to using the iconv library
  *
  * @param  string  the encoding name
  * @param  string  the string of target

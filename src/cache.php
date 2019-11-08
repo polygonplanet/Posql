@@ -7,7 +7,7 @@ require_once dirname(__FILE__) . '/core.php';
  * This class handles the query cache
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet@gmail.com>
+ * @author    polygon planet <polygon.planet.aqua@gmail.com>
  *---------------------------------------------------------------------------*/
 class Posql_Cache extends Posql_Core {
 
@@ -15,7 +15,7 @@ class Posql_Cache extends Posql_Core {
  * Gets table name which used for queries cache
  *
  * @param  void
- * @return string  the table name of query cache 
+ * @return string  the table name of query cache
  * @access public
  */
  function getQueryCacheTableName(){
@@ -203,7 +203,7 @@ class Posql_Cache extends Posql_Core {
              'query' => $this->joinWords($this->splitSyntax($query)),
              'rows'  => $this->encode($rows)
            );
-           $puts = $tname . $this->DELIM_CACHE . $this->encode($row) 
+           $puts = $tname . $this->DELIM_CACHE . $this->encode($row)
                                                . $this->NL;
            if ($this->fputs($fp, $puts)) {
              $result++;

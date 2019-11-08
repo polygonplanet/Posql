@@ -7,7 +7,7 @@ require_once dirname(__FILE__) . '/ecma.php';
  * This class implements compression and the archive methods
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet@gmail.com>
+ * @author    polygon planet <polygon.planet.aqua@gmail.com>
  *---------------------------------------------------------------------------*/
 class Posql_Archive {
 
@@ -30,7 +30,7 @@ class Posql_Archive {
  * @return Posql_Archive
  * @access public
  */
- function Posql_Archive(){
+ function __construct() {
    $this->_init();
  }
 
@@ -83,7 +83,7 @@ class Posql_Archive {
  * @access public
  */
  function getAlphamericBase63(){
-   static $base63 = 
+   static $base63 =
    '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_';
    return $base63;
  }
@@ -227,11 +227,11 @@ class Posql_Archive {
      }
      if ($c < 32) {
        $s .= $js->fromCharCode(
-         $m ?  $l * 32 + $c 
+         $m ?  $l * 32 + $c
             : ($l * 32 + $c) * 62 + $o[$js->charAt($a, $i++)]
        );
      } else if ($c < 49) {
-       $l = ($c < 36 ? $c - 32  : 
+       $l = ($c < 36 ? $c - 32  :
             ($c < 44 ? $c + 348 : $c + 1996));
        $m = 1;
      } else if ($c < 50) {

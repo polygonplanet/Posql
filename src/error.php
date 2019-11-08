@@ -7,7 +7,7 @@ require_once dirname(__FILE__) . '/utils.php';
  * The class raise and generate the errors as stackable exception
  *
  * @package Posql
- * @author  polygon planet <polygon.planet@gmail.com>
+ * @author  polygon planet <polygon.planet.aqua@gmail.com>
  *---------------------------------------------------------------------------*/
 class Posql_Error extends Posql_Utils {
 /**

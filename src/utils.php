@@ -7,7 +7,7 @@ require_once dirname(__FILE__) . '/pager.php';
  * This class is a group of static methods for Posql
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet@gmail.com>
+ * @author    polygon planet <polygon.planet.aqua@gmail.com>
  *---------------------------------------------------------------------------*/
 class Posql_Utils extends Posql_Config {
 

@@ -7,7 +7,7 @@ require_once dirname(__FILE__) . '/method.php';
  * The result storage and statement handle class for Posql result objects
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet@gmail.com>
+ * @author    polygon planet <polygon.planet.aqua@gmail.com>
  *---------------------------------------------------------------------------*/
 class Posql_Statement {
 
@@ -96,7 +96,7 @@ class Posql_Statement {
  * @return Posql_Statement
  * @access public
  */
- function Posql_Statement(&$posql, $rows = array(), $query = null){
+ function __construct(&$posql, $rows = array(), $query = null) {
    $this->rows = array();
    $this->fetchMode = $this->defaultFetchMode;
    $this->_referObject($posql);
@@ -475,9 +475,9 @@ class Posql_Statement {
      'column' => 7,
      'class'  => 8,
      'into'   => 9,
-     
+
      //'tablenames' => 14,
-     
+
      'single'   => 100,
      'string'   => 101,
      'integer'  => 102,

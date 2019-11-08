@@ -7,7 +7,7 @@ require_once dirname(__FILE__) . '/unicode.php';
  * This class emulates ECMAScript/JavaScript functions as ECMA-262 3rd edition
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet@gmail.com>
+ * @author    polygon planet <polygon.planet.aqua@gmail.com>
  *---------------------------------------------------------------------------*/
 class Posql_ECMA {
 
@@ -36,7 +36,7 @@ class Posql_ECMA {
  * @return Posql_ECMA
  * @access public
  */
- function Posql_ECMA(){
+ function __construct() {
    $this->_init();
  }
 
@@ -158,7 +158,7 @@ class Posql_ECMA {
    if (is_scalar($string)) {
      $string = (string)$string;
      $offset = (int)$offset;
-     
+
      if ($string === $search) {
        $result = 0;
      } else if ($string != null) {
@@ -292,7 +292,7 @@ class Posql_ECMA {
  * @param  string  subject string
  * @param  number  the zero-based index at which to begin extraction
  * @param  number  the zero-based index at which to end extraction.
- *                 if omitted, extracts to the end of the string. 
+ *                 if omitted, extracts to the end of the string.
  * @return string  extracted string
  * @access public
  */
@@ -609,7 +609,7 @@ class Posql_ECMA {
              $result .= '%' . $digits[$ch >> 4] . $digits[$ch & 0xF];
            }
          } else {
-           $result .= '%u' . $digits[$ch >> 12] 
+           $result .= '%u' . $digits[$ch >> 12]
                            . $digits[($ch & 0xF00) >> 8]
                            . $digits[($ch & 0xF0) >> 4]
                            . $digits[$ch & 0xF];
@@ -717,7 +717,7 @@ class Posql_ECMA {
              }
              $v = (($c - 0xD800) << 10) + ($c2 - 0xDC00) + 0x10000;
            }
-           // convert code into a UTF-8 buffer 
+           // convert code into a UTF-8 buffer
            // which must be at least 6 bytes long.
            // rawurlencode() is a shortcut for process.
            $result .= rawurlencode($this->unicode->chr($v));
@@ -772,7 +772,7 @@ class Posql_ECMA {
                $result = '';
                break;
              }
-             
+
              for ($j = 1; $j < $n; $j++) {
                $k++;
                if ($chars[$k] !== $percent) {
@@ -915,13 +915,13 @@ class Posql_ECMA {
  }
 
 /**
- * Encodes a Uniform Resource Identifier (URI) by replacing each 
- * instance of certain characters by one, two, three, or 
- * four escape sequences representing the UTF-8 encoding of the character 
- * (will only be four escape sequences for characters composed of two 
+ * Encodes a Uniform Resource Identifier (URI) by replacing each
+ * instance of certain characters by one, two, three, or
+ * four escape sequences representing the UTF-8 encoding of the character
+ * (will only be four escape sequences for characters composed of two
  *  "surrogate" characters).
  *
- * Assumes that the URI is a complete URI, so does not encode reserved 
+ * Assumes that the URI is a complete URI, so does not encode reserved
  * characters that have special meaning in the URI.
  *
  * Compatibility with UTF-8.
@@ -940,9 +940,9 @@ class Posql_ECMA {
 
 /**
  * Encodes a Uniform Resource Identifier (URI) component by replacing each
- * instance of certain characters by one, two, three, or four escape 
- * sequences representing the UTF-8 encoding of the character 
- * (will only be four escape sequences for characters composed of two 
+ * instance of certain characters by one, two, three, or four escape
+ * sequences representing the UTF-8 encoding of the character
+ * (will only be four escape sequences for characters composed of two
  *  "surrogate" characters).
  *
  * encodeURIComponent escapes all characters except the following:
@@ -962,10 +962,10 @@ class Posql_ECMA {
  }
 
 /**
- * Decodes a Uniform Resource Identifier (URI) previously 
+ * Decodes a Uniform Resource Identifier (URI) previously
  * created by encodeURI or by a similar routine.
  *
- * Replaces each escape sequence in the encoded URI 
+ * Replaces each escape sequence in the encoded URI
  * with the character that it represents.
  * Does not decode escape sequences that could not have
  * been introduced by encodeURI.
