@@ -672,7 +672,6 @@ class Posql_Config {
    */
   var $ctype;
 
-
   /**
    * @var    Posql_Charset   maintains instance of the Posql_Charset class
    * @access public
@@ -707,10 +706,8 @@ class Posql_Config {
    * @var    string   versions of this class
    * @access public   **READ ONLY**
    */
-   //var $version = '$Version$';
   var $version = '2.17';
 
-  //-----------------------------------------------------------------------------
   /**
    * @access public
    */
@@ -721,72 +718,72 @@ class Posql_Config {
   /**
    * @access public
    */
-   function getDecoder(){
-     return $this->decoder;
-   }
+  function getDecoder() {
+    return $this->decoder;
+  }
 
   /**
    * @access public
    */
-   function getExt(){
-     return $this->ext;
-   }
+  function getExt() {
+    return $this->ext;
+  }
 
   /**
    * @access public
    */
-   function getMax(){
-     return $this->MAX;
-   }
+  function getMax() {
+    return $this->MAX;
+  }
 
   /**
    * @access public
    */
-   function getDeadLockTimeout(){
-     return $this->deadLockTimeout;
-   }
+  function getDeadLockTimeout() {
+    return $this->deadLockTimeout;
+  }
 
   /**
    * @access public
    */
-   function setAutoVacuum($auto_vacuum){
-     $this->autoVacuum = (bool) $auto_vacuum;
-   }
+  function setAutoVacuum($auto_vacuum) {
+    $this->autoVacuum = (bool)$auto_vacuum;
+  }
 
   /**
    * @access public
    */
-   function getAutoVacuum(){
-     return $this->autoVacuum;
-   }
+  function getAutoVacuum() {
+    return $this->autoVacuum;
+  }
 
   /**
    * @access public
    */
-   function setAutoAssignEquals($auto_assign_equals){
-     $this->autoAssignEquals = (bool) $auto_assign_equals;
-   }
+  function setAutoAssignEquals($auto_assign_equals) {
+    $this->autoAssignEquals = (bool)$auto_assign_equals;
+  }
 
   /**
    * @access public
    */
-   function getAutoAssignEquals(){
-     return $this->autoAssignEquals;
-   }
+  function getAutoAssignEquals() {
+    return $this->autoAssignEquals;
+  }
 
   /**
    * @access public
    */
-   function getAutoIncrement(){
-     return $this->autoIncrement;
-   }
+  function getAutoIncrement() {
+    return $this->autoIncrement;
+  }
 
   /**
    * @access public
    */
-   function getAutoLock(){
-     return $this->autoLock;
-   }
+  function getAutoLock() {
+    return $this->autoLock;
+  }
 
   /**
    * Set value whether to enable exclusive lock.
@@ -801,70 +798,70 @@ class Posql_Config {
    * @return void
    * @access public
    */
-   function setAutoLock($auto_lock){
-     $this->autoLock = (bool)$auto_lock;
-   }
+  function setAutoLock($auto_lock) {
+    $this->autoLock = (bool)$auto_lock;
+  }
 
   /**
    * @access public
    */
-   function getDefaultDataType(){
-     return $this->defaultDataType;
-   }
+  function getDefaultDataType() {
+    return $this->defaultDataType;
+  }
 
   /**
    * @access public
    */
-   function setCharset($charset){
-     $this->charset = (string) $charset;
-   }
+  function setCharset($charset) {
+    $this->charset = (string)$charset;
+  }
 
   /**
    * @access public
    */
-   function getCharset(){
-     return $this->charset;
-   }
+  function getCharset() {
+    return $this->charset;
+  }
 
   /**
    * @access public
    */
-   function getLastMethod(){
-     return $this->lastMethod;
-   }
+  function getLastMethod() {
+    return $this->lastMethod;
+  }
 
   /**
    * @access public
    */
-   function getLastQuery(){
-     return $this->lastQuery;
-   }
+  function getLastQuery() {
+    return $this->lastQuery;
+  }
 
   /**
    * @access public
    */
-   function setUseQueryCache($use_query_cache){
-     $this->useQueryCache = (bool)$use_query_cache;
-   }
+  function setUseQueryCache($use_query_cache) {
+    $this->useQueryCache = (bool)$use_query_cache;
+  }
 
   /**
    * @access public
    */
-   function getUseQueryCache(){
-     return $this->useQueryCache;
-   }
+  function getUseQueryCache() {
+    return $this->useQueryCache;
+  }
 
   /**
    * @access public
    */
-   function setQueryCacheMaxRows($query_cache_max_rows){
-     $this->queryCacheMaxRows = $query_cache_max_rows - 0;
-   }
+  function setQueryCacheMaxRows($query_cache_max_rows) {
+    $this->queryCacheMaxRows = $query_cache_max_rows - 0;
+  }
 
   /**
    * @access public
    */
-   function getQueryCacheMaxRows(){
-     return $this->queryCacheMaxRows;
-   }
+  function getQueryCacheMaxRows() {
+    return $this->queryCacheMaxRows;
+  }
 }
