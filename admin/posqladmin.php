@@ -54,7 +54,7 @@ class PosqlAdmin {
   var $OPTIMIZE_DELETE  = 1;
   var $OPTIMIZE_REPAIR  = 2;
   var $helpDocFrameId   = 'posql_help_frame';
-  var $projectURL       = 'http://sourceforge.jp/projects/posql/';
+  var $projectURL       = 'https://github.com/polygonplanet/Posql';
 
 
   function init(){
