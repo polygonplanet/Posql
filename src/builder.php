@@ -1,14 +1,14 @@
 <?php
 require_once dirname(__FILE__) . '/parser.php';
-//-----------------------------------------------------------------------------
+
 /**
  * @name Posql_Builder
  *
  * This builder class that assign from tokens for Posql
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet.aqua@gmail.com>
- *---------------------------------------------------------------------------*/
+ * @author    Polygon Planet <polygon.planet.aqua@gmail.com>
+ */
 class Posql_Builder extends Posql_Parser {
 
 /**
@@ -711,7 +711,7 @@ class Posql_Builder extends Posql_Parser {
            break;
      }
    }
-   //debug($args,'color=blue:***insert***;');
+
    if (!$this->hasError()) {
      switch ($this->lastMethod) {
        case 'insert':
@@ -975,7 +975,7 @@ class Posql_Builder extends Posql_Parser {
            break 2;
      }
    }
-   //debug($args,'color=blue:***buildSelectQuery***;');
+
    if ($this->hasError()) {
      $result = array();
    } else {
@@ -2044,6 +2044,4 @@ class Posql_Builder extends Posql_Parser {
    }
    return $result;
  }
-
 }
-
