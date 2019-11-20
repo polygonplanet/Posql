@@ -112,7 +112,7 @@ class Posql_Statement {
  *
  * @access public
  */
- function __destruct(){
+ function __destruct() {
    unset($this->posql);
    foreach (get_object_vars($this) as $prop => $val) {
      if ($prop != null) {
@@ -128,7 +128,7 @@ class Posql_Statement {
  * @return void
  * @access private
  */
- function _referObject(&$posql){
+ function _referObject(&$posql) {
    $this->posql = & $posql;
  }
 
@@ -139,7 +139,7 @@ class Posql_Statement {
  * @return void
  * @access private
  */
- function _setResultRows($rows){
+ function _setResultRows($rows) {
    if (is_array($rows)) {
      $this->rows = $rows;
      $this->rowCount = count($this->rows);
@@ -164,7 +164,7 @@ class Posql_Statement {
  * @return  boolean  success or failure
  * @access  public
  */
- function execute($params = array()){
+ function execute($params = array()) {
    $result = false;
    if (!$this->posql->hasError()) {
      if (!empty($params) && is_array($params)) {
@@ -255,7 +255,7 @@ class Posql_Statement {
  * @return boolean  success or failure
  * @access public
  */
- function bindValue($param, $value, $type = null, $length = null){
+ function bindValue($param, $value, $type = null, $length = null) {
    $result = false;
    if (is_scalar($param)) {
      if (is_string($param)) {
@@ -279,7 +279,7 @@ class Posql_Statement {
  * @return boolean  success or failure
  * @access public
  */
- function bindParam($param, &$var, $type = null, $length = null){
+ function bindParam($param, &$var, $type = null, $length = null) {
    $result = false;
    if (is_scalar($param)) {
      if (is_string($param)) {
@@ -309,7 +309,7 @@ class Posql_Statement {
  * @return boolean  success or failure
  * @access public
  */
- function bindColumn($column, &$var, $type = null, $maxlen = null){
+ function bindColumn($column, &$var, $type = null, $maxlen = null) {
    $result = false;
    if (is_scalar($column)) {
      if (is_string($column)) {
@@ -333,7 +333,7 @@ class Posql_Statement {
  * @return void
  * @access private
  */
- function _assignBindColumns($row = array()){
+ function _assignBindColumns($row = array()) {
    if (!empty($this->bindColumns) && is_array($this->bindColumns)) {
      if (empty($row)) {
        $row = end($this->rows);
@@ -361,7 +361,7 @@ class Posql_Statement {
  * @return array    the names of columns as associate array
  * @access public
  */
- function getColumnNames($flip = false){
+ function getColumnNames($flip = false) {
    $result = array();
    if (empty($this->columnNames)) {
      if (!empty($this->rows)
@@ -391,7 +391,7 @@ class Posql_Statement {
  * @return boolean success or failure
  * @access public
  */
- function setFetchMode($fetch_mode = null, $args_1 = null, $args_2 = null){
+ function setFetchMode($fetch_mode = null, $args_1 = null, $args_2 = null) {
    $result = false;
    $mode = $this->mapFetchMode($fetch_mode, true);
    switch ($mode) {
@@ -462,7 +462,7 @@ class Posql_Statement {
  * @return mixed   the value to mapped of fetch mode
  * @access private
  */
- function mapFetchMode($fetch_mode, $as_string = false){
+ function mapFetchMode($fetch_mode, $as_string = false) {
    static $marks, $flip_maps, $maps = array(
      'lazy'   => 1,
      'assoc'  => 2,
@@ -561,7 +561,7 @@ class Posql_Statement {
  * @return mixed   the value that was fetched
  * @access public
  */
- function fetch($fetch_mode = null, $args_1 = null, $args_2 = null){
+ function fetch($fetch_mode = null, $args_1 = null, $args_2 = null) {
    $result = false;
    $row = array_shift($this->rows);
    if (!empty($row) && is_array($row)) {
@@ -653,7 +653,7 @@ class Posql_Statement {
  * @see    fetch
  * @access public
  */
- function fetchRow(){
+ function fetchRow() {
    $args = func_get_args();
    $result = call_user_func_array(array(&$this, 'fetch'), $args);
    return $result;
@@ -685,8 +685,7 @@ class Posql_Statement {
        case 'htmltable':
            array_shift($args);
            array_unshift($args, $this->rows);
-           $result = call_user_func_array(array(&$this->posql,
-                                                'toHTMLTable'), $args);
+           $result = call_user_func_array(array(&$this->posql, 'toHTMLTable'), $args);
            break;
        default:
            $result = array();
@@ -695,6 +694,7 @@ class Posql_Statement {
    } else {
      if (!$this->posql->hasError()) {
        $this->_assignBindColumns();
+
        switch ($mode) {
          case 'assoc':
              $result = array_splice($this->rows, 0);
@@ -813,7 +813,7 @@ class Posql_Statement {
  * @return string  created HTML TABLE element
  * @access public
  */
- function fetchAllHTMLTable($caption = null, $attr = array('border' => 1)){
+ function fetchAllHTMLTable($caption = null, $attr = array('border' => 1)) {
    $args = func_get_args();
    array_unshift($args, 'htmltable');
    $result = call_user_func_array(array(&$this, 'fetchAll'), $args);
@@ -828,7 +828,7 @@ class Posql_Statement {
  * @return mixed  value of corresponding column
  * @access public
  */
- function fetchColumn($column_key = 0){
+ function fetchColumn($column_key = 0) {
    $result = $this->fetch('column', $column_key);
    return $result;
  }
@@ -841,7 +841,7 @@ class Posql_Statement {
  * @return object  instance of the required class, or FALSE on error
  * @access public
  */
- function fetchObject($class_name = null, $class_args = null){
+ function fetchObject($class_name = null, $class_args = null) {
    $result = false;
    if (func_num_args()) {
      $result = $this->fetch('class', $class_name, $class_args);
@@ -858,7 +858,7 @@ class Posql_Statement {
  * @return array   the field name which correlated by dot(.), or FALSE
  * @access public
  */
- function getTableNames($key = null){
+ function getTableNames($key = null) {
    $result = false;
    $column_names = $this->getColumnNames();
    if (!empty($column_names) && is_array($column_names)) {
@@ -933,7 +933,7 @@ class Posql_Statement {
  * @return number  the actual row count
  * @access public
  */
- function rowCount(){
+ function rowCount() {
    $result = $this->rowCount;
    return $result;
  }
@@ -945,7 +945,7 @@ class Posql_Statement {
  * @return number  the number of columns
  * @access public
  */
- function columnCount(){
+ function columnCount() {
    $result = $this->columnCount;
    return $result;
  }
@@ -957,7 +957,7 @@ class Posql_Statement {
  * @return number  the number of rows
  * @access public
  */
- function numRows(){
+ function numRows() {
    $result = $this->rowCount();
    return $result;
  }
@@ -969,7 +969,7 @@ class Posql_Statement {
  * @return number  the number of columns
  * @access public
  */
- function numCols(){
+ function numCols() {
    $result = $this->columnCount();
    return $result;
  }
@@ -981,7 +981,7 @@ class Posql_Statement {
  * @return boolean  whether the rows of the result are empty, or not
  * @access public
  */
- function hasRows(){
+ function hasRows() {
    $result = !empty($this->rows);
    return $result;
  }
@@ -993,7 +993,7 @@ class Posql_Statement {
  * @return number   the number of rows affected
  * @access public
  */
- function affectedRows(){
+ function affectedRows() {
    $result = $this->affectedRows;
    return $result;
  }
@@ -1005,7 +1005,7 @@ class Posql_Statement {
  * @return void
  * @access public
  */
- function free(){
+ function free() {
    $this->__destruct();
  }
 
@@ -1016,9 +1016,8 @@ class Posql_Statement {
  * @return void
  * @access public
  */
- function closeCursor(){
+ function closeCursor() {
    $rows = array();
    $this->_setResultRows($rows);
  }
-
 }
