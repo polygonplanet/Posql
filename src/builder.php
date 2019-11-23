@@ -21,8 +21,10 @@ class Posql_Builder extends Posql_Parser {
    */
   function toLikePattern($pattern, $escape = '\\') {
     static $patterns = array();
+
     $result = null;
     $hash = $this->hashValue($pattern . $escape);
+
     if (isset($patterns[$hash])) {
       $result = $patterns[$hash];
     } else {
@@ -30,7 +32,8 @@ class Posql_Builder extends Posql_Parser {
       $dlm = '~';
       $pre = '^';
       $suf = '$';
-      $q   = '\'';
+      $q = '\'';
+
       if ($this->isStringToken($pattern)) {
         $pattern = substr($pattern, 1, -1);
       }
@@ -53,26 +56,14 @@ class Posql_Builder extends Posql_Parser {
         $pattern = preg_quote($pattern, $dlm);
         $translates = array(
           '\\\\\\\\' => '\\\\',
-          '\"'       => '"',
-          '\''       => '\\\'',
-          '\%'       => '%',
-          '\_'       => '_',
-          '%'        => '.*',
-          '_'        => '.'
+          '\"' => '"',
+          '\'' => '\\\'',
+          '\%' => '%',
+          '\_' => '_',
+          '%'  => '.*',
+          '_'  => '.'
         );
         $pattern = strtr($pattern, $translates);
-        /*
-       $pattern = strtr($pattern,
-         array(
-           '\"' => '"',
-           '\'' => '\\\'',
-           '\%' => '%',
-           '\_' => '_',
-           '%'  => '.*',
-           '_'  => '.'
-         )
-       );
-       */
       }
       $result = $dlm . $pre . $pattern . $suf . $dlm . $mod;
       $patterns[$hash] = $result;
@@ -89,6 +80,7 @@ class Posql_Builder extends Posql_Parser {
    */
   function toArrayResult($stmt) {
     $result = array();
+
     if (is_array($stmt)) {
       $result = $stmt;
     } else {
@@ -102,6 +94,7 @@ class Posql_Builder extends Posql_Parser {
         }
       }
     }
+
     $stmt = null;
     unset($stmt);
     return $result;
@@ -120,6 +113,7 @@ class Posql_Builder extends Posql_Parser {
     $checked = false;
     $enable_left = false;
     $enable_right = false;
+
     if (is_string($left)) {
       if ($right === null) {
         if (strpos($left, '.') !== false) {
@@ -155,11 +149,8 @@ class Posql_Builder extends Posql_Parser {
             if (empty($this->_correlationPrefix)) {
               $this->initCorrelationPrefix();
             }
-            $result = sprintf('_%s_%s_%s',
-              $this->_correlationPrefix,
-              $left,
-              $right
-            );
+
+            $result = sprintf('_%s_%s_%s', $this->_correlationPrefix, $left, $right);
           }
         }
       }
@@ -176,8 +167,10 @@ class Posql_Builder extends Posql_Parser {
    */
   function joinWords($tokens) {
     static $cache = array(), $size = 0;
+
     $result = '';
     $hash = $this->hashValue($tokens);
+
     if (isset($cache[$hash])) {
       $result = $cache[$hash];
     } else {
@@ -186,6 +179,7 @@ class Posql_Builder extends Posql_Parser {
         $h = $i - 1;
         $j = $i + 1;
         $pre = substr($token, 0, 1);
+
         if ($this->isAlphaNum($pre) || $pre === '$') {
           if (isset($tokens[$h])) {
             $lastchar = substr($tokens[$h], -1);
@@ -197,22 +191,26 @@ class Posql_Builder extends Posql_Parser {
           $tokens[$i] = ' ' . $token . ' ';
         }
       }
+
       $result = trim(implode('', $tokens));
       if ($size < 0x1000 && strlen($result) < 0x100) {
         $cache[$hash] = $result;
         $size++;
       }
     }
+
     return $result;
   }
 
   /**
    * @access private
    */
-  function joinCrossTable(&$row1, &$row2, $row1name, $row2name, $expr = true){
+  function joinCrossTable(&$row1, &$row2, $row1name, $row2name, $expr = true) {
     $result = array();
+
     $row1_count = count($row1);
     $row2_count = count($row2);
+
     if ($expr === true) {
       for ($i = 0; $i < $row2_count; $i++) {
         for ($j = 0; $j < $row1_count; $j++) {
@@ -221,20 +219,25 @@ class Posql_Builder extends Posql_Parser {
       }
     } else {
       $this->fixJoinCrossExpr($expr, $row1name, $row2name);
+
       $arg = array();
       $arg[$row1name] = array();
       $arg[$row2name] = array();
       $arg_row1name = & $arg[$row1name];
       $arg_row2name = & $arg[$row2name];
       $first = true;
+
       for ($i = 0; $i < $row2_count; $i++) {
         $arg_row2name = $row2[$i];
+
         for ($j = 0; $j < $row1_count; $j++) {
           $arg_row1name = $row1[$j];
+
           if ($first) {
             if ($this->safeExpr($arg, $expr)) {
               $result[] = $row2[$i] + $row1[$j];
             }
+
             if ($this->hasError()) {
               $result = array();
               $row1 = array();
@@ -251,13 +254,14 @@ class Posql_Builder extends Posql_Parser {
       }
       unset($arg_row1name, $arg_row2name);
     }
+
     return $result;
   }
 
   /**
    * @access private
    */
-  function fixJoinCrossExpr(&$expr, $row1name, $row2name){
+  function fixJoinCrossExpr(&$expr, $row1name, $row2name) {
     if ($expr != null && strpos($expr, $row1name) === false) {
       $row_keys = array(
         $row1name => 1,
@@ -266,18 +270,19 @@ class Posql_Builder extends Posql_Parser {
       $tokens = $this->splitSyntax($expr);
       $tokens = array_values($tokens);
       $length = count($tokens);
+
       for ($i = 0; $i < $length; $i++) {
         $token = $this->getValue($tokens, $i);
         $next = $this->getValue($tokens, $i + 1);
         switch ($token) {
-        case '$':
-          if ($next != null && !array_key_exists($next, $row_keys)) {
-            $tokens[$i + 1] = $row1name;
-            $i++;
-          }
-          break;
-        default:
-          break;
+          case '$':
+            if ($next != null && !array_key_exists($next, $row_keys)) {
+              $tokens[$i + 1] = $row1name;
+              $i++;
+            }
+            break;
+          default:
+            break;
         }
       }
       $expr = $this->joinWords($tokens);
@@ -287,10 +292,10 @@ class Posql_Builder extends Posql_Parser {
   /**
    * @access private
    */
-  function joinLeftTable(&$row1, &$row2, $row1name, $row2name,
-    $using, $isleft, $expr = true){
+  function joinLeftTable(&$row1, &$row2, $row1name, $row2name, $using, $isleft, $expr = true) {
     $result = array();
     $expr = $this->optimizeExpr($expr);
+
     if ($expr === false) {
       if (!empty($row1) && is_array($row1) && is_array(reset($row1))) {
         $keys = array_keys(reset($row1));
@@ -302,41 +307,43 @@ class Posql_Builder extends Posql_Parser {
       }
     } else {
       if ($isleft) {
-        $cross = $this->joinCrossTable($row1, $row2,
-          $row1name, $row2name, $expr);
+        $cross = $this->joinCrossTable($row1, $row2, $row1name, $row2name, $expr);
       } else {
-        $cross = $this->joinCrossTable($row2, $row1,
-          $row2name, $row1name, $expr);
+        $cross = $this->joinCrossTable($row2, $row1, $row2name, $row1name, $expr);
       }
+
       if ($expr === true) {
         $result = array_splice($cross, 0);
       } else {
-        if (!empty($row1) && is_array($row1)
-          && !empty($row2) && is_array($row2)) {
-          $row1_count  = count($row1);
-          $row2_count  = count($row2);
+        if (!empty($row1) && is_array($row1) && !empty($row2) && is_array($row2)) {
+          $row1_count = count($row1);
+          $row2_count = count($row2);
           $cross_count = count($cross);
-          $max_count   = $cross_count;
+          $max_count = $cross_count;
           if ($max_count < $row1_count) {
             $max_count = $row1_count;
           }
+
           $cross_keys = array();
           if (isset($cross[0]) && is_array($cross[0])) {
             foreach ($cross[0] as $key => $val) {
               $cross_keys[$key] = null;
             }
           }
+
           $reset = reset($row1);
           if (!is_array($reset)) {
             $this->pushError('illegal record(%s) on JOIN', $reset);
           } else {
             $row1_keys = array_keys($reset);
             $reset = reset($row2);
+
             if (!is_array($reset)) {
               $this->pushError('illegal record(%s) on JOIN', $reset);
             } else {
               $row2_keys = array_keys($reset);
               $arg = array();
+
               if (!empty($using)) {
                 if (!is_array($using)) {
                   $using = array();
@@ -344,14 +351,17 @@ class Posql_Builder extends Posql_Parser {
                   $using = array_flip(array_filter($using, 'is_string'));
                 }
               }
+
               if (empty($cross_keys)) {
                 $join_keys = array_merge($row1_keys, $row2_keys);
                 $join_keys = array_unique($join_keys);
               } else {
                 $join_keys = array_keys($cross_keys);
               }
+
               for ($i = 0, $j = 0; $i < $max_count; $i++) {
                 $new_row = array();
+
                 if ($i < $cross_count) {
                   $new_row = $cross[$j];
                   $cross[$j] = null;
@@ -362,6 +372,7 @@ class Posql_Builder extends Posql_Parser {
                   if (isset($row2[$i])) {
                     $diff = $row2[$i];
                   }
+
                   if (empty($using)) {
                     $pad = $row;
                     foreach ($row2_keys as $key) {
@@ -375,6 +386,7 @@ class Posql_Builder extends Posql_Parser {
                     $new_row = $row + $diff;
                   }
                 }
+
                 $join_row = array();
                 foreach ($join_keys as $key) {
                   if (array_key_exists($key, $new_row)) {
@@ -391,15 +403,17 @@ class Posql_Builder extends Posql_Parser {
       }
       unset($cross);
     }
+
     return $result;
   }
 
   /**
    * @access private
    */
-  function appendCorrelationPairs(&$rows, $table_name){
+  function appendCorrelationPairs(&$rows, $table_name) {
     if (is_array($rows)) {
       $row_count = count($rows);
+
       for ($i = 0; $i < $row_count; $i++) {
         foreach ($rows[$i] as $col => $val) {
           $column_name = sprintf('%s.%s', $table_name, $col);
@@ -413,36 +427,36 @@ class Posql_Builder extends Posql_Parser {
    * @return void
    * @access private
    */
-  function joinTables(&$rows, $info = array(), $expr = true){
+  function joinTables(&$rows, $info = array(), $expr = true) {
     $length = count($rows);
     if ($length < 1 || $length !== count($info)) {
-      /*
-     $this->pushError('The numbers of tables'
-                    . ' and rows are discrepancy on JOIN');
-     */
+      //$this->pushError('The numbers of tables and rows are discrepancy on JOIN');
       $rows = array();
     } else {
       $info = array_values($info);
       for ($i = 0; $i < $length; $i++) {
         $table_name = $this->getValue($info[$i], 'table_name');
-        $table_as   = $this->getValue($info[$i], 'table_as');
-        $join_type  = $this->getValue($info[$i], 'join_type', 'undefined');
-        $join_expr  = $this->getValue($info[$i], 'join_expr', false);
-        $using      = $this->getValue($info[$i], 'using', array());
+        $table_as = $this->getValue($info[$i], 'table_as');
+        $join_type = $this->getValue($info[$i], 'join_type', 'undefined');
+        $join_expr = $this->getValue($info[$i], 'join_expr', false);
+        $using = $this->getValue($info[$i], 'using', array());
         $tname = $this->encodeKey($table_name);
+
         if (!isset($rows[$tname])) {
           $this->pushError('Table is not exists(%s)', $table_name);
           $rows = array();
           break;
         }
+
         if ($this->hasError()) {
           $rows = array();
           break;
         }
+
         if ($i === 0) {
-          $base_row        = $rows[$tname];
-          $base_row_name   = $table_name;
-          $base_count      = count($base_row);
+          $base_row = $rows[$tname];
+          $base_row_name = $table_name;
+          $base_count = count($base_row);
           $this->tableName = $tname;
           $this->appendCorrelationPairs($base_row, $base_row_name);
           continue;
@@ -450,38 +464,41 @@ class Posql_Builder extends Posql_Parser {
           $row = $rows[$tname];
           $this->appendCorrelationPairs($row, $table_name);
         }
+
         $join_type = strtolower($join_type);
         switch ($join_type) {
-        case 'cross':
-        case 'inner':
-        case 'join':
-          $base_row = $this->joinCrossTable($base_row, $row,
-            $base_row_name, $table_name, $join_expr);
-          break;
-        case 'full':
-        case 'left':
-        case 'natural':
-          $base_row = $this->joinLeftTable($base_row, $row,
-            $base_row_name, $table_name, $using, true, $join_expr);
-          if ($join_type !== 'full') {
+          case 'cross':
+          case 'inner':
+          case 'join':
+            $base_row = $this->joinCrossTable($base_row, $row,
+              $base_row_name, $table_name, $join_expr);
             break;
-          }
-        case 'right':
-          $base_row = $this->joinLeftTable($row, $base_row,
-            $table_name, $base_row_name, $using, false, $join_expr);
-          break;
-        default:
-          $this->pushError('Not supported JOIN type(%s)', $join_type);
-          $rows = array();
-          break 2;
+          case 'full':
+          case 'left':
+          case 'natural':
+            $base_row = $this->joinLeftTable($base_row, $row,
+              $base_row_name, $table_name, $using, true, $join_expr);
+            if ($join_type !== 'full') {
+              break;
+            }
+          case 'right':
+            $base_row = $this->joinLeftTable($row, $base_row,
+              $table_name, $base_row_name, $using, false, $join_expr);
+            break;
+          default:
+            $this->pushError('Not supported JOIN type(%s)', $join_type);
+            $rows = array();
+            break 2;
         }
       }
+
       if (!empty($base_row)) {
         $tmp = $base_row;
         unset($base_row);
         $rows = $tmp;
         unset($tmp);
       }
+
       unset($base_row, $tmp);
       $this->applyJoinExpr($rows, $expr);
     }
@@ -490,13 +507,12 @@ class Posql_Builder extends Posql_Parser {
   /**
    * @access private
    */
-  function applyJoinExpr(&$rows, $expr = true){
+  function applyJoinExpr(&$rows, $expr = true) {
     if ($this->hasError()) {
       $rows = array();
     } else if ($expr !== true) {
       if (!empty($rows) && is_array($rows)) {
-        if (!empty($this->_extraJoinExpr)
-          && is_string($expr) && $expr != null) {
+        if (!empty($this->_extraJoinExpr) && is_string($expr) && $expr != null) {
           $extra_expr = $this->_extraJoinExpr;
           if (is_array($extra_expr)) {
             $extra_expr = $this->toOneArray($extra_expr);
@@ -510,10 +526,12 @@ class Posql_Builder extends Posql_Parser {
             $this->addValidMarks($expr);
           }
         }
+
         $this->_extraJoinExpr = array();
         $rows = array_values($rows);
         $length = count($rows);
         $first = true;
+
         for ($i = 0; $i < $length; $i++) {
           $valid_row = array();
           foreach ($rows[$i] as $key => $val) {
@@ -521,11 +539,13 @@ class Posql_Builder extends Posql_Parser {
             $left_key = $this->toCorrelationName($key);
             $valid_row[$left_key] = $val;
           }
+
           if ($first) {
             $first = false;
             if (!$this->safeExpr($valid_row, $expr)) {
               unset($rows[$i]);
             }
+
             if ($this->hasError()) {
               $rows = array();
               break;
@@ -549,48 +569,50 @@ class Posql_Builder extends Posql_Parser {
    * @return mixed   results of executed, or false on error
    * @access private
    */
-  function buildQuery($parsed, $type){
+  function buildQuery($parsed, $type) {
     $result = false;
     $this->_useQuery = true;
+
     switch (strtolower($type)) {
-    case 'select':
-      $result = $this->buildSelectQuery($parsed);
-      break;
-    case 'update':
-      $result = $this->buildUpdateQuery($parsed);
-      break;
-    case 'delete':
-      $result = $this->buildDeleteQuery($parsed);
-      break;
-    case 'insert':
-    case 'replace':
-      $result = $this->buildInsertQuery($parsed);
-      break;
-    case 'create':
-      $result = $this->buildCreateQuery($parsed);
-      break;
-    case 'drop':
-      $result = $this->buildDropQuery($parsed);
-      break;
-    case 'vacuum':
-      $result = $this->vacuum();
-      break;
-    case 'describe':
-    case 'desc':
-      $result = $this->buildDescribeQuery($parsed);
-      break;
-    case 'begin':
-    case 'start':
-    case 'commit':
-    case 'end':
-    case 'rollback':
-      $result = $this->transaction($type);
-      break;
-    case 'alter':
-    default:
-      $this->pushError('Not supported SQL syntax(%s)', $type);
-      break;
+      case 'select':
+        $result = $this->buildSelectQuery($parsed);
+        break;
+      case 'update':
+        $result = $this->buildUpdateQuery($parsed);
+        break;
+      case 'delete':
+        $result = $this->buildDeleteQuery($parsed);
+        break;
+      case 'insert':
+      case 'replace':
+        $result = $this->buildInsertQuery($parsed);
+        break;
+      case 'create':
+        $result = $this->buildCreateQuery($parsed);
+        break;
+      case 'drop':
+        $result = $this->buildDropQuery($parsed);
+        break;
+      case 'vacuum':
+        $result = $this->vacuum();
+        break;
+      case 'describe':
+      case 'desc':
+        $result = $this->buildDescribeQuery($parsed);
+        break;
+      case 'begin':
+      case 'start':
+      case 'commit':
+      case 'end':
+      case 'rollback':
+        $result = $this->transaction($type);
+        break;
+      case 'alter':
+      default:
+        $this->pushError('Not supported SQL syntax(%s)', $type);
+        break;
     }
+
     $this->_useQuery = null;
     return $result;
   }
@@ -602,38 +624,46 @@ class Posql_Builder extends Posql_Parser {
    * @return mixed   results of executed, or false on error
    * @access private
    */
-  function buildCreateQuery($parsed){
+  function buildCreateQuery($parsed) {
     $result = false;
-    $args = array('table'    => array('table'    => null, 'fields' => array()),
-      'database' => array('database' => null));
+    $args = array(
+      'table' => array(
+        'table' => null,
+        'fields' => array()
+      ),
+      'database' => array(
+        'database' => null
+      )
+    );
+
     $type = null;
     if (isset($parsed['table'])) {
       $type = 'table';
     } else if (isset($parsed['database'])) {
       $type = 'database';
     }
+
     switch ($type) {
-    case 'table':
-      $args = $this->parseCreateTableQuery($parsed[$type], true);
-      if (!$this->hasError()) {
-        if (is_array($args)
-          && isset($args['table'], $args['fields'])) {
-          $primary = $this->getValue($args, 'primary');
-          $result = $this->createTable($args['table'],
-            $args['fields'], $primary);
+      case 'table':
+        $args = $this->parseCreateTableQuery($parsed[$type], true);
+        if (!$this->hasError()) {
+          if (is_array($args) && isset($args['table'], $args['fields'])) {
+            $primary = $this->getValue($args, 'primary');
+            $result = $this->createTable($args['table'], $args['fields'], $primary);
+          }
         }
-      }
-      break;
-    case 'database':
-      $path = $this->parseCreateDatabaseQuery($parsed[$type]);
-      if (!$this->hasError() && $path != null) {
-        $result = $this->createDatabase($path);
-      }
-      break;
-    default:
-      $this->pushError('Not supported SQL syntax(%s)', $type);
-      break;
+        break;
+      case 'database':
+        $path = $this->parseCreateDatabaseQuery($parsed[$type]);
+        if (!$this->hasError() && $path != null) {
+          $result = $this->createDatabase($path);
+        }
+        break;
+      default:
+        $this->pushError('Not supported SQL syntax(%s)', $type);
+        break;
     }
+
     return $result;
   }
 
@@ -644,37 +674,46 @@ class Posql_Builder extends Posql_Parser {
    * @return mixed   results of executed, or false on error
    * @access private
    */
-  function buildDropQuery($parsed){
+  function buildDropQuery($parsed) {
     $result = false;
-    $args = array('table'    => array('table'    => null),
-      'database' => array('database' => null));
+    $args = array(
+      'table' => array(
+        'table' => null
+      ),
+      'database' => array(
+        'database' => null
+      )
+    );
+
     $type = null;
     if (isset($parsed['table'])) {
       $type = 'table';
     } else if (isset($parsed['database'])) {
       $type = 'database';
     }
+
     switch ($type) {
-    case 'table':
-      $table = $this->parseDropQuery($parsed[$type]);
-      if (!$this->hasError()) {
-        if (is_string($table) && $table != null) {
-          $result = $this->dropTable($table);
+      case 'table':
+        $table = $this->parseDropQuery($parsed[$type]);
+        if (!$this->hasError()) {
+          if (is_string($table) && $table != null) {
+            $result = $this->dropTable($table);
+          }
         }
-      }
-      break;
-    case 'database':
-      $dbname = $this->parseDropQuery($parsed[$type]);
-      if (!$this->hasError()) {
-        if (is_string($dbname) && $dbname != null) {
-          $result = $this->dropDatabase($dbname);
+        break;
+      case 'database':
+        $dbname = $this->parseDropQuery($parsed[$type]);
+        if (!$this->hasError()) {
+          if (is_string($dbname) && $dbname != null) {
+            $result = $this->dropDatabase($dbname);
+          }
         }
-      }
-      break;
-    default:
-      $this->pushError('Not supported SQL syntax(%s)', $type);
-      break;
+        break;
+      default:
+        $this->pushError('Not supported SQL syntax(%s)', $type);
+        break;
     }
+
     return $result;
   }
 
@@ -685,51 +724,58 @@ class Posql_Builder extends Posql_Parser {
    * @return mixed   results of executed, or false on error
    * @access private
    */
-  function buildInsertQuery($parsed){
+  function buildInsertQuery($parsed) {
     $result = false;
-    $args = array('table' => null, 'rows' => array());
+    $args = array(
+      'table' => null,
+      'rows' => array()
+    );
     $cols = array();
     ksort($parsed);
+
     foreach ($parsed as $key => $val) {
       switch ($key) {
-      case 'into':
-        $args['table'] = $this->assignNames($val);
-        break;
-      case 'cols':
-        $cols = $val;
-        break;
-      case 'values':
-        $values = array('cols'   => $cols,
-          'values' => $val);
-        $args['rows'] = $this->parseInsertValues($values);
-        $this->_execExpr = true;
-        break;
-      case 'select':
-        if (is_array($val)) {
-          array_unshift($val, $key);
-        }
-        $args['rows'] = $this->buildInsertSelectSubQuery($val, $cols);
-        break;
-      case 'set':
-      default:
-        $this->pushError('Not supported SQL syntax(%s)', $key);
-        break;
+        case 'into':
+          $args['table'] = $this->assignNames($val);
+          break;
+        case 'cols':
+          $cols = $val;
+          break;
+        case 'values':
+          $values = array(
+            'cols' => $cols,
+            'values' => $val
+          );
+          $args['rows'] = $this->parseInsertValues($values);
+          $this->_execExpr = true;
+          break;
+        case 'select':
+          if (is_array($val)) {
+            array_unshift($val, $key);
+          }
+          $args['rows'] = $this->buildInsertSelectSubQuery($val, $cols);
+          break;
+        case 'set':
+        default:
+          $this->pushError('Not supported SQL syntax(%s)', $key);
+          break;
       }
     }
 
     if (!$this->hasError()) {
       switch ($this->lastMethod) {
-      case 'insert':
-        $result = $this->insert($args['table'], $args['rows']);
-        break;
-      case 'replace':
-        $result = $this->replace($args['table'], $args['rows']);
-        break;
-      default:
-        $this->pushError('Not supported SQL syntax(%s)', $this->lastMethod);
-        break;
+        case 'insert':
+          $result = $this->insert($args['table'], $args['rows']);
+          break;
+        case 'replace':
+          $result = $this->replace($args['table'], $args['rows']);
+          break;
+        default:
+          $this->pushError('Not supported SQL syntax(%s)', $this->lastMethod);
+          break;
       }
     }
+
     $this->_execExpr = false;
     return $result;
   }
@@ -742,25 +788,31 @@ class Posql_Builder extends Posql_Parser {
    * @return array   array which was executed as SELECT sub-query
    * @access private
    */
-  function buildInsertSelectSubQuery($select, $cols){
+  function buildInsertSelectSubQuery($select, $cols) {
     $result = array();
+
     if (!$this->hasError()) {
       if (empty($cols) || !is_array($cols)) {
         $this->pushError('Cannot execute sub-query. expect columns-list');
       } else if (empty($select) || !is_array($select)) {
         $this->pushError('Cannot execute sub-query. expect SELECT clause');
       } else {
-        $values = array('cols'   => $cols,
-          'values' => $cols);
+        $values = array(
+          'cols' => $cols,
+          'values' => $cols
+        );
         $columns = $this->parseInsertValues($values);
+
         if (!$this->hasError()) {
           if (is_array($columns) && reset($columns) === key($columns)) {
             $columns = array_values($columns);
             $parsed_select = $this->parseSelectQuery($select);
+
             if (!$this->hasError() && is_array($parsed_select)) {
               $stmt = $this->buildSelectQuery($parsed_select);
               if (!$this->hasError()) {
                 $rows = null;
+
                 if ($this->isStatementObject($stmt)) {
                   $rows = $stmt->fetchAll('assoc');
                 } else if (is_array($stmt) && $this->isAssoc(reset($stmt))) {
@@ -768,19 +820,22 @@ class Posql_Builder extends Posql_Parser {
                 } else {
                   $this->pushError('Failed to get records on INSERT-SELECT');
                 }
+
                 if (!$this->hasError() && is_array($rows)) {
                   $rows_count = count($rows);
+
                   for ($i = 0; $i < $rows_count; $i++) {
                     $new_row = array();
                     $values = array_values($rows[$i]);
+
                     foreach ($columns as $index => $column) {
                       if (array_key_exists($index, $values)) {
                         $new_row[$column] = $values[$index];
                       }
                     }
+
                     if (empty($new_row)) {
-                      $this->pushError('Column count does not match'
-                        .  ' value count on INSERT-SELECT');
+                      $this->pushError('Column count does not match value count on INSERT-SELECT');
                       $rows = array();
                       break;
                     }
@@ -797,6 +852,7 @@ class Posql_Builder extends Posql_Parser {
         }
       }
     }
+
     return $result;
   }
 
@@ -807,29 +863,35 @@ class Posql_Builder extends Posql_Parser {
    * @return mixed   results of executed, or false on error
    * @access private
    */
-  function buildDeleteQuery($parsed){
+  function buildDeleteQuery($parsed) {
     $result = false;
-    $args = array('table' => null, 'expr' => false);
+    $args = array(
+      'table' => null,
+      'expr' => false
+    );
+
     foreach ($parsed as $key => $val) {
       switch ($key) {
-      case 'from':
-        $tablename = $this->assignNames($val);
-        if ($this->getMeta($tablename)) {
-          $this->tableName = $this->encodeKey($tablename);
-        }
-        $args['table'] = $tablename;
-        break;
-      case 'where':
-        $args['expr'] = $this->validExpr($val);
-        break;
-      default:
-        $this->pushError('Not supported SQL syntax(%s)', $key);
-        break;
+        case 'from':
+          $tablename = $this->assignNames($val);
+          if ($this->getMeta($tablename)) {
+            $this->tableName = $this->encodeKey($tablename);
+          }
+          $args['table'] = $tablename;
+          break;
+        case 'where':
+          $args['expr'] = $this->validExpr($val);
+          break;
+        default:
+          $this->pushError('Not supported SQL syntax(%s)', $key);
+          break;
       }
     }
+
     if (!$this->hasError()) {
       $result = $this->delete($args['table'], $args['expr']);
     }
+
     return $result;
   }
 
@@ -840,30 +902,36 @@ class Posql_Builder extends Posql_Parser {
    * @return mixed   results of executed, or false on error
    * @access private
    */
-  function buildUpdateQuery($parsed){
+  function buildUpdateQuery($parsed) {
     $result = false;
-    $args = array('table' => null, 'row' => array(), 'expr' => true);
+    $args = array(
+      'table' => null,
+      'row' => array(),
+      'expr' => true
+    );
+
     foreach ($parsed as $key => $val) {
       switch ($key) {
-      case 'update':
-        $tablename = $this->assignNames($val);
-        if ($this->getMeta($tablename)) {
-          $this->tableName = $this->encodeKey($tablename);
-        }
-        $args['table'] = $tablename;
-        break;
-      case 'where':
-        $args['expr'] = $this->validExpr($val);
-        break;
-      case 'set':
-        $args['row'] = $this->parseUpdateSet($val);
-        $this->_execExpr = true;
-        break;
-      default:
-        $this->pushError('Not supported SQL syntax(%s)', $key);
-        break;
+        case 'update':
+          $tablename = $this->assignNames($val);
+          if ($this->getMeta($tablename)) {
+            $this->tableName = $this->encodeKey($tablename);
+          }
+          $args['table'] = $tablename;
+          break;
+        case 'where':
+          $args['expr'] = $this->validExpr($val);
+          break;
+        case 'set':
+          $args['row'] = $this->parseUpdateSet($val);
+          $this->_execExpr = true;
+          break;
+        default:
+          $this->pushError('Not supported SQL syntax(%s)', $key);
+          break;
       }
     }
+
     if (!$this->hasError()) {
       $result = $this->update($args['table'], $args['row'], $args['expr']);
     }
@@ -878,7 +946,7 @@ class Posql_Builder extends Posql_Parser {
    * @return mixed   results of executed, or false on error
    * @access private
    */
-  function buildSelectQuery($parsed){
+  function buildSelectQuery($parsed) {
     $result = false;
     $this->_subSelectJoinInfo = array();
     $this->_subSelectJoinUniqueNames = array();
@@ -886,98 +954,103 @@ class Posql_Builder extends Posql_Parser {
     $multi = false;
     $sub_select = false;
     $subsets = array();
+
     foreach ($parsed as $key => $val) {
       switch ($key) {
-      case 'select':
-        $args[$key] = $this->joinWords($val);
-        break;
-      case 'from':
-        $tables = array();
-        $from = $this->joinWords($val);
-        $table_name = 'table_name';
-        $sub_select = $this->isSubSelectFrom($from);
-        if ($sub_select) {
-          $this->tableName = '';
-          $this->applyAliasNames($from, $args['select']);
-          $aliases = $this->getTableAliasNames();
-          if (is_array($aliases)) {
-            $this->tableName = $this->encodeKey(reset($aliases));
-          }
-          if ($this->isMultipleSelect($from)) {
-            $this->_subSelectJoinInfo = $this->parseJoinTables($val);
-            if ($this->hasError()) {
-              break 2;
-            } else if (empty($this->_subSelectJoinUniqueNames)) {
-              $this->pushError('Failed to compile on sub-query using JOIN');
-              break 2;
+        case 'select':
+          $args[$key] = $this->joinWords($val);
+          break;
+        case 'from':
+          $tables = array();
+          $from = $this->joinWords($val);
+          $table_name = 'table_name';
+          $sub_select = $this->isSubSelectFrom($from);
+
+          if ($sub_select) {
+            $this->tableName = '';
+            $this->applyAliasNames($from, $args['select']);
+            $aliases = $this->getTableAliasNames();
+
+            if (is_array($aliases)) {
+              $this->tableName = $this->encodeKey(reset($aliases));
             }
-            $args[$key] = $this->execMultiSubQueryFrom($from);
-            $multi = true;
+
+            if ($this->isMultipleSelect($from)) {
+              $this->_subSelectJoinInfo = $this->parseJoinTables($val);
+              if ($this->hasError()) {
+                break 2;
+              } else if (empty($this->_subSelectJoinUniqueNames)) {
+                $this->pushError('Failed to compile on sub-query using JOIN');
+                break 2;
+              }
+              $args[$key] = $this->execMultiSubQueryFrom($from);
+              $multi = true;
+            } else {
+              $args[$key] = $this->execSubQueryFrom($from);
+            }
           } else {
-            $args[$key] = $this->execSubQueryFrom($from);
-          }
-        } else {
-          $this->tableName = $this->encodeKey($from);
-          if ($this->isMultipleSelect($from)) {
-            $tables = $this->parseJoinTables($val);
-            if (isset($tables[0][$table_name])) {
-              $this->tableName = $this->encodeKey($tables[0][$table_name]);
+            $this->tableName = $this->encodeKey($from);
+            if ($this->isMultipleSelect($from)) {
+              $tables = $this->parseJoinTables($val);
+              if (isset($tables[0][$table_name])) {
+                $this->tableName = $this->encodeKey($tables[0][$table_name]);
+              }
+              $args[$key] = $tables;
+              $multi = true;
+            } else {
+              $tables = $this->parseFromClause($val);
+              if (isset($tables[$table_name])) {
+                $this->tableName = $this->encodeKey($tables[$table_name]);
+                $this->appendAliasToken($val);
+                $from = $this->joinWords($val);
+              }
+              $args[$key] = $from;
             }
-            $args[$key] = $tables;
-            $multi = true;
-          } else {
-            $tables = $this->parseFromClause($val);
-            if (isset($tables[$table_name])) {
-              $this->tableName = $this->encodeKey($tables[$table_name]);
-              $this->appendAliasToken($val);
-              $from = $this->joinWords($val);
-            }
-            $args[$key] = $from;
           }
-        }
-        unset($tables, $from);
-        break;
-      case 'where':
-        if (!empty($this->tableName)
-          && empty($this->meta[$this->tableName])) {
-          $this->getMeta();
-        }
-        if ($multi) {
-          $this->_onMultiSelect = true;
-        }
-        if (!$sub_select) {
-          $this->applyAliasNames($args['from'], $args['select']);
-        }
-        $args[$key] = $this->validExpr($val);
-        $this->_onMultiSelect = null;
-        break;
-      case 'group':
-        $args[$key] = $this->joinWords($val);
-        break;
-      case 'having':
-        $args[$key] = $this->joinWords($val);
-        break;
-      case 'order':
-        $args[$key] = $this->parseOrderByTokens($val);
-        break;
-      case 'limit':
-        $args[$key] = $this->parseLimitTokens($val);
-        break;
-      case 'union':
-      case 'union_all':
-      case 'intersect':
-      case 'intersect_all':
-      case 'except':
-      case 'except_all':
-        if (empty($val) || $val === array(array())) {
-          $error = strtoupper(strtr($key, '_', ' '));
-          $this->pushError('Syntax error, expect(%s)', $error);
-        }
-        $subsets[$key] = $val;
-        break;
-      default:
-        $this->pushError('Not supported SQL syntax(%s)', $key);
-        break 2;
+          unset($tables, $from);
+          break;
+        case 'where':
+          if (!empty($this->tableName) && empty($this->meta[$this->tableName])) {
+            $this->getMeta();
+          }
+
+          if ($multi) {
+            $this->_onMultiSelect = true;
+          }
+
+          if (!$sub_select) {
+            $this->applyAliasNames($args['from'], $args['select']);
+          }
+          $args[$key] = $this->validExpr($val);
+          $this->_onMultiSelect = null;
+          break;
+        case 'group':
+          $args[$key] = $this->joinWords($val);
+          break;
+        case 'having':
+          $args[$key] = $this->joinWords($val);
+          break;
+        case 'order':
+          $args[$key] = $this->parseOrderByTokens($val);
+          break;
+        case 'limit':
+          $args[$key] = $this->parseLimitTokens($val);
+          break;
+        case 'union':
+        case 'union_all':
+        case 'intersect':
+        case 'intersect_all':
+        case 'except':
+        case 'except_all':
+          if (empty($val) || $val === array(array())) {
+            $error = strtoupper(strtr($key, '_', ' '));
+            $this->pushError('Syntax error, expect(%s)', $error);
+          }
+          $subsets[$key] = $val;
+          break;
+        default:
+          $this->pushError('Not supported SQL syntax(%s)', $key);
+          break 2;
       }
     }
 
@@ -997,12 +1070,14 @@ class Posql_Builder extends Posql_Parser {
       } else {
         $result = $this->select($args);
       }
+
       if (!empty($subsets)) {
         $this->_unionColNames = array();
         $result = $this->buildSelectUnionQuery($result, $args, $subsets);
         $this->_unionColNames = array();
       }
     }
+
     $this->_subSelectJoinInfo = array();
     $this->_subSelectJoinUniqueNames = array();
     return $result;
@@ -1015,8 +1090,9 @@ class Posql_Builder extends Posql_Parser {
    * @return mixed   executed result-set, or FALSE on error
    * @access private
    */
-  function buildSelectUnionQuery($base_stmt, $args, $subsets){
+  function buildSelectUnionQuery($base_stmt, $args, $subsets) {
     $result = array();
+
     if (!empty($subsets) && is_array($subsets)) {
       $rows = array();
       if (!$this->isStatementObject($base_stmt)) {
@@ -1028,8 +1104,10 @@ class Posql_Builder extends Posql_Parser {
       } else {
         $rows = $base_stmt->fetchAll('assoc');
       }
+
       $base_stmt = null;
       unset($base_stmt);
+
       if (!$this->hasError()) {
         foreach ($subsets as $type => $subset) {
           foreach ($subset as $parsed_tokens) {
@@ -1037,6 +1115,7 @@ class Posql_Builder extends Posql_Parser {
             if ($col_names != null) {
               $col_names = $this->parseColumns($col_names, 'columns');
             }
+
             if (is_array($col_names)) {
               foreach ($col_names as $col_name) {
                 $this->_unionColNames[$col_name] = 1;
@@ -1044,9 +1123,11 @@ class Posql_Builder extends Posql_Parser {
             } else if (is_string($col_names)) {
               $this->_unionColNames[$col_names] = 1;
             }
+
             $this->_onUnionSelect = true;
             $stmt = $this->buildSelectQuery($parsed_tokens);
             $this->_onUnionSelect = null;
+
             if ($this->hasError()) {
               break;
             } else {
@@ -1060,43 +1141,47 @@ class Posql_Builder extends Posql_Parser {
               } else {
                 $union_rows = $stmt->fetchAll('assoc');
               }
+
               switch ($type) {
-              case 'union':
-                $rows = $this->unionAll($rows, $union_rows, $col_names);
-                $this->applyDistinct($rows);
-                break;
-              case 'union_all':
-                $rows = $this->unionAll($rows, $union_rows, $col_names);
-                break;
-              case 'intersect':
-                $rows = $this->intersectAll($rows, $union_rows, $col_names);
-                $this->applyDistinct($rows);
-                break;
-              case 'intersect_all':
-                $rows = $this->intersectAll($rows, $union_rows, $col_names);
-                break;
-              case 'except':
-                $rows = $this->exceptAll($rows, $union_rows, $col_names);
-                $this->applyDistinct($rows);
-                break;
-              case 'except_all':
-                $rows = $this->exceptAll($rows, $union_rows, $col_names);
-                break;
-              default:
-                $this->pushError('Not supported syntax(%s)', $type);
-                break 2;
+                case 'union':
+                  $rows = $this->unionAll($rows, $union_rows, $col_names);
+                  $this->applyDistinct($rows);
+                  break;
+                case 'union_all':
+                  $rows = $this->unionAll($rows, $union_rows, $col_names);
+                  break;
+                case 'intersect':
+                  $rows = $this->intersectAll($rows, $union_rows, $col_names);
+                  $this->applyDistinct($rows);
+                  break;
+                case 'intersect_all':
+                  $rows = $this->intersectAll($rows, $union_rows, $col_names);
+                  break;
+                case 'except':
+                  $rows = $this->exceptAll($rows, $union_rows, $col_names);
+                  $this->applyDistinct($rows);
+                  break;
+                case 'except_all':
+                  $rows = $this->exceptAll($rows, $union_rows, $col_names);
+                  break;
+                default:
+                  $this->pushError('Not supported syntax(%s)', $type);
+                  break 2;
               }
             }
             $stmt = null;
             unset($stmt);
           }
+
           if ($this->hasError()) {
             break;
           }
         }
+
         if ($this->hasError()) {
           $rows = array();
         }
+
         $this->removeCorrelationName($rows);
         $args['from'] = $rows;
         $args['where'] = true;
@@ -1105,6 +1190,7 @@ class Posql_Builder extends Posql_Parser {
         $this->_onUnionSelect = null;
       }
     }
+
     if (is_array($result) && empty($this->_fromStatement)) {
       $result = new Posql_Statement($this, $result, $this->getLastQuery());
     }
@@ -1118,21 +1204,23 @@ class Posql_Builder extends Posql_Parser {
    * @return mixed   results of executed, or FALSE on error
    * @access private
    */
-  function buildDescribeQuery($parsed){
+  function buildDescribeQuery($parsed) {
     $result = false;
     $args = array('table' => null);
+
     foreach ($parsed as $key => $val) {
       switch ($key) {
-      case 'desc':
-      case 'describe':
-        $table_name = $this->assignNames($val);
-        $args['table'] = $table_name;
-        break;
-      default:
-        $this->pushError('Not supported SQL syntax(%s)', $key);
-        break;
+        case 'desc':
+        case 'describe':
+          $table_name = $this->assignNames($val);
+          $args['table'] = $table_name;
+          break;
+        default:
+          $this->pushError('Not supported SQL syntax(%s)', $key);
+          break;
       }
     }
+
     if ($this->hasError()) {
       $result = array();
     } else {
@@ -1151,14 +1239,16 @@ class Posql_Builder extends Posql_Parser {
    * @param  array   column names which is used for result-set
    * @access public
    */
-  function unionAll($base_rows, $union_rows, $col_names = array()){
+  function unionAll($base_rows, $union_rows, $col_names = array()) {
     $result = array();
+
     if (!is_array($base_rows) || !is_array($union_rows)) {
       $this->pushError('Invalid arguments on UNION');
     } else {
       if (empty($col_names) && is_array(reset($base_rows))) {
         $col_names = array_keys(reset($base_rows));
       }
+
       if (empty($col_names)) {
         $this->pushError('Failed to compound rows on UNION');
       } else {
@@ -1169,20 +1259,24 @@ class Posql_Builder extends Posql_Parser {
         $union_rows = array_values($union_rows);
         $union_row_count = count($union_rows);
         $key = 0;
+
         while (--$union_row_count >= 0) {
           $row = $union_rows[$key];
           $union_rows[$key] = null;
           $base_rows[] = $row;
           $key++;
         }
+
         unset($union_rows);
         $base_rows = array_values($base_rows);
         $base_row_count = count($base_rows);
         $key = 0;
+
         while (--$base_row_count >= 0) {
           $row = $base_rows[$key];
           $base_rows[$key] = null;
           $subset_row = array();
+
           if (is_array($row) && count($row) === $col_length) {
             foreach (array_values($row) as $i => $val) {
               $subset_row[ $col_names[$i] ] = $val;
@@ -1209,14 +1303,16 @@ class Posql_Builder extends Posql_Parser {
    * @param  array   column names which is used for result-set
    * @access public
    */
-  function intersectAll($base_rows, $intersect_rows, $col_names = array()){
+  function intersectAll($base_rows, $intersect_rows, $col_names = array()) {
     $result = array();
+
     if (!is_array($base_rows) || !is_array($intersect_rows)) {
       $this->pushError('Invalid arguments on INTERSECT');
     } else {
       if (empty($col_names) && is_array(reset($base_rows))) {
         $col_names = array_keys(reset($base_rows));
       }
+
       if (empty($col_names)) {
         $this->pushError('Failed to compound rows on INTERSECT');
       } else {
@@ -1228,6 +1324,7 @@ class Posql_Builder extends Posql_Parser {
         $intersect_row_count = count($intersect_rows);
         for ($i = 0; $i < $base_row_count; $i++) {
           $subset_row = array();
+
           if (isset($base_rows[$i]) && is_array($base_rows[$i])
             && count($base_rows[$i]) === $col_length) {
             $index = -1;
@@ -1238,6 +1335,7 @@ class Posql_Builder extends Posql_Parser {
                 break;
               }
             }
+
             if (array_key_exists($index, $base_rows)) {
               foreach ($base_values as $idx => $val) {
                 $subset_row[ $col_names[$idx] ] = $val;
@@ -1245,8 +1343,7 @@ class Posql_Builder extends Posql_Parser {
               $result[] = $subset_row;
             }
           } else {
-            $this->pushError('In INTERSECT,'
-              .  ' two rows should be the same numbers');
+            $this->pushError('In INTERSECT, two rows should be the same numbers');
             $result = array();
             break;
           }
@@ -1265,7 +1362,7 @@ class Posql_Builder extends Posql_Parser {
    * @param  array   column names which is used for result-set
    * @access public
    */
-  function exceptAll($base_rows, $except_rows, $col_names = array()){
+  function exceptAll($base_rows, $except_rows, $col_names = array()) {
     $result = array();
     if (!is_array($base_rows) || !is_array($except_rows)) {
       $this->pushError('Invalid arguments on EXCEPT');
@@ -1273,14 +1370,16 @@ class Posql_Builder extends Posql_Parser {
       if (empty($col_names) && is_array(reset($base_rows))) {
         $col_names = array_keys(reset($base_rows));
       }
+
       if (empty($col_names)) {
         $this->pushError('Failed to compound rows on EXCEPT');
       } else {
         if (is_string($col_names)) {
           $col_names = array($col_names);
         }
+
         $col_length = count($col_names);
-        $base_row_count   = count($base_rows);
+        $base_row_count = count($base_rows);
         $except_row_count = count($except_rows);
         for ($i = 0; $i < $base_row_count; $i++) {
           $subset_row = array();
@@ -1294,6 +1393,7 @@ class Posql_Builder extends Posql_Parser {
                 break;
               }
             }
+
             if (array_key_exists($index, $base_rows)) {
               foreach ($base_values as $idx => $val) {
                 $subset_row[ $col_names[$idx] ] = $val;
@@ -1320,8 +1420,9 @@ class Posql_Builder extends Posql_Parser {
    * @return array   array which appended the aggregate results to rows
    * @access private
    */
-  function appendAggregateResult(&$rows, $aggregates = array()){
+  function appendAggregateResult(&$rows, $aggregates = array()) {
     $result = array();
+
     if (!$this->hasError()) {
       if (is_array($rows) && is_array(reset($rows))
         && is_array($aggregates) && is_array(reset($aggregates))) {
@@ -1329,12 +1430,12 @@ class Posql_Builder extends Posql_Parser {
         $reset = reset($aggregates);
         $check_col = key($reset);
         $agg_count = count($aggregates);
-        if (count($rows) !== $agg_count
-          || !array_key_exists($check_col, $rows_reset)) {
+        if (count($rows) !== $agg_count || !array_key_exists($check_col, $rows_reset)) {
           $this->pushError('Failed to execute the expression on HAVING');
         } else {
           $agg_appends = array();
           $i = 0;
+
           while (--$agg_count >= 0) {
             $agg_shift = array_shift($aggregates);
             if (is_array($agg_shift)) {
@@ -1344,11 +1445,13 @@ class Posql_Builder extends Posql_Parser {
                     if (is_string($func)) {
                       $func = strtoupper($func);
                       $key = null;
+
                       if ($func === 'COUNT_ALL') {
                         $key = sprintf('COUNT(*)#%08u', $i);
                       } else {
                         $key = sprintf('%s(%s)#%08u', $func, $agg_col, $i);
                       }
+
                       $rows[$i][$key] = $val;
                       $agg_appends[$key] = $val;
                     }
@@ -1375,19 +1478,21 @@ class Posql_Builder extends Posql_Parser {
    * @return void
    * @access private
    */
-  function assignCols(&$rows, $cols, $aggregates = null,
-    $group = null, $order = null){
+  function assignCols(&$rows, $cols, $aggregates = null, $group = null, $order = null) {
     $is_distinct = false;
+
     if ($this->isDistinct($cols)) {
       $is_distinct = true;
       $this->removeDistinctToken($cols);
     } else if ($this->isSelectListAllClause($cols)) {
       $this->removeSelectListAllClauseToken($cols);
     }
+
     $parsed = $this->parseColumns($cols);
     if (!empty($parsed) && is_array($parsed) && isset($parsed['cols'])) {
       $cols = $parsed['cols'];
       $cols_order = $cols;
+
       if (!empty($parsed['func']) && is_array($parsed['func'])) {
         $fn = $parsed['func'];
         if ($aggregates == null) {
@@ -1401,18 +1506,23 @@ class Posql_Builder extends Posql_Parser {
       } else {
         $funcs = array();
       }
+
       $cols_order = $this->assignColumnsOrder($cols_order, $funcs);
       $this->orderColumns($rows, $cols_order);
+
       if (!empty($parsed['as']) && is_array($parsed['as'])) {
         $as = $parsed['as'];
         $as_mod = $this->replaceAliasNames($as);
+
         if (!empty($as_mod) && is_array($as_mod) && $as !== $as_mod) {
           $as = $as + $as_mod;
         }
+
         foreach ($as as $field_name => $alias_name) {
           $restored = $this->restoreTableAliasName($field_name);
           $as[$restored] = $alias_name;
         }
+
         $row_count = count($rows);
         for ($i = 0; $i < $row_count; $i++) {
           foreach ($as as $org => $key) {
@@ -1423,6 +1533,7 @@ class Posql_Builder extends Posql_Parser {
             }
           }
         }
+
         if (!$this->hasError()) {
           $cols = $cols_order;
           $cols_order = array();
@@ -1436,6 +1547,7 @@ class Posql_Builder extends Posql_Parser {
           $this->orderColumns($rows, $cols_order);
         }
       }
+
       if ($this->hasError()) {
         $rows = array();
       } else {
@@ -1446,6 +1558,7 @@ class Posql_Builder extends Posql_Parser {
         if ($is_distinct) {
           $this->applyDistinct($rows);
         }
+
         if ($this->_onMultiSelect) {
           $this->removeCorrelationName($rows);
         }
@@ -1463,17 +1576,19 @@ class Posql_Builder extends Posql_Parser {
    * @return void
    * @access private
    */
-  function assignColsBySimpleCount(&$rows, $count, $cols){
+  function assignColsBySimpleCount(&$rows, $count, $cols) {
     $rows = array();
     $parsed = $this->parseColumns($cols);
+
     if (!empty($parsed) && is_array($parsed) && isset($parsed['cols'])) {
       $cols = $parsed['cols'];
       $func = 'func';
-      if (!empty($parsed[$func])
-        && is_array($parsed[$func]) && is_string(reset($parsed[$func]))) {
-        $func_col  = reset($parsed[$func]);
+
+      if (!empty($parsed[$func]) && is_array($parsed[$func]) && is_string(reset($parsed[$func]))) {
+        $func_col = reset($parsed[$func]);
         $func_name = key($parsed[$func]);
         $rows = $this->execSimpleCountFunction($count, $func_name, $func_col);
+
         if (!empty($rows) && isset($rows[0]) && is_array($rows)) {
           $as = 'as';
           if (!empty($parsed[$as]) && is_array($parsed[$as])) {
@@ -1482,6 +1597,7 @@ class Posql_Builder extends Posql_Parser {
             if (!empty($as_mod) && is_array($as_mod) && $aliases !== $as_mod) {
               $aliases = $aliases + $as_mod;
             }
+
             $row_count = count($rows);
             for ($i = 0; $i < $row_count; $i++) {
               foreach ($aliases as $org => $key) {
@@ -1491,6 +1607,7 @@ class Posql_Builder extends Posql_Parser {
                   $rows[$i][$key] = $tmp;
                 }
               }
+
               if ($i > 1) {
                 $this->pushError('Failed to assign the alias name');
                 $rows = array();
@@ -1503,6 +1620,7 @@ class Posql_Builder extends Posql_Parser {
         $this->pushError('Failed to assign the column');
       }
     }
+
     if ($this->hasError()) {
       $rows = array();
     }
@@ -1518,14 +1636,16 @@ class Posql_Builder extends Posql_Parser {
    * @return void
    * @access private
    */
-  function assignDualCols(&$rows, $cols, $aggregates = null, $group = null){
+  function assignDualCols(&$rows, $cols, $aggregates = null, $group = null) {
     $is_distinct = false;
+
     if ($this->isDistinct($cols)) {
       $is_distinct = true;
       $this->removeDistinctToken($cols);
     } else if ($this->isSelectListAllClause($cols)) {
       $this->removeSelectListAllClauseToken($cols);
     }
+
     $parsed = $this->parseColumns($cols);
     if (!empty($parsed) && is_array($parsed) && isset($parsed['cols'])) {
       $cols = $parsed['cols'];
@@ -1537,6 +1657,7 @@ class Posql_Builder extends Posql_Parser {
         if (!empty($as_mod) && is_array($as_mod) && $as !== $as_mod) {
           $as = $as + $as_mod;
         }
+
         $count = count($rows);
         for ($i = 0; $i < $count; $i++) {
           foreach ($as as $org => $key) {
@@ -1547,6 +1668,7 @@ class Posql_Builder extends Posql_Parser {
             }
           }
         }
+
         if (!$this->hasError()) {
           $cols = $cols_order;
           $cols_order = array();
@@ -1560,6 +1682,7 @@ class Posql_Builder extends Posql_Parser {
           $this->orderColumns($rows, $cols_order);
         }
       }
+
       if ($this->hasError()) {
         $rows = array();
       } else {
@@ -1581,15 +1704,16 @@ class Posql_Builder extends Posql_Parser {
    *
    * @access private
    */
-  function removeDuplicateRows(&$rows, $cols_order, $parsed, $group = null){
+  function removeDuplicateRows(&$rows, $cols_order, $parsed, $group = null) {
     $f = 'func';
-    if (!empty($rows) && is_array($rows)
-      && empty($group) && is_array($cols_order)) {
+
+    if (!empty($rows) && is_array($rows) && empty($group) && is_array($cols_order)) {
       if (count($cols_order) === 1 && !empty($parsed[$f])
         && count($parsed[$f]) === 1 && is_array(reset($rows))) {
         $length = count($rows);
         $values = array();
         $remove = true;
+
         for ($i = 0; $i < $length; $i++) {
           if (!empty($values)) {
             if ($rows[$i] === $values) {
@@ -1601,6 +1725,7 @@ class Posql_Builder extends Posql_Parser {
           }
           $values = $rows[$i];
         }
+
         if ($remove) {
           $rows = reset($rows);
           if (!array_key_exists(0, $rows)) {
@@ -1614,11 +1739,11 @@ class Posql_Builder extends Posql_Parser {
   /**
    * @access private
    */
-  function diffColumns(&$rows, $cols, $each = false){
+  function diffColumns(&$rows, $cols, $each = false) {
     if (!empty($rows) && is_array($rows) && is_array($cols)) {
       $reset = reset($rows);
-      if (!empty($reset)
-        && is_array($reset) && count($cols) < count($reset)) {
+
+      if (!empty($reset) && is_array($reset) && count($cols) < count($reset)) {
         $diff_keys = array_diff(array_keys($reset), $cols);
         $length = count($rows);
         for ($i = 0; $i < $length; $i++) {
@@ -1636,7 +1761,7 @@ class Posql_Builder extends Posql_Parser {
   /**
    * @access private
    */
-  function orderColumns(&$rows, $cols_order){
+  function orderColumns(&$rows, $cols_order) {
     $result = false;
     if (!$this->hasError()) {
       if (!is_array($cols_order)) {
@@ -1648,10 +1773,12 @@ class Posql_Builder extends Posql_Parser {
         } else {
           $selcols = array();
         }
+
         $new_rows = array();
         $rows = array_values($rows);
         $count = count($rows);
         $i = 0;
+
         while (--$count >= 0) {
           $row = $rows[$i];
           $rows[$i] = null;
@@ -1674,6 +1801,7 @@ class Posql_Builder extends Posql_Parser {
           $new_rows[$i] = $new_rows[$i] + $row;
           $i++;
         }
+
         if ($this->hasError()) {
           $rows = array();
         } else {
@@ -1687,8 +1815,9 @@ class Posql_Builder extends Posql_Parser {
   /**
    * @access private
    */
-  function assignColumnsOrder($cols_order, $funcs = array()){
+  function assignColumnsOrder($cols_order, $funcs = array()) {
     $result = false;
+
     $this->_selectExprCols = array();
     if ($this->_fromSubSelect) {
       $curmeta = $this->_subSelectMeta;
@@ -1701,12 +1830,11 @@ class Posql_Builder extends Posql_Parser {
       && empty($this->_onUnionSelect)) {
       if (empty($this->tableName)
         || empty($this->meta[$this->tableName])) {
-        $this->pushError('Cannot load the meta data'
-          .  ' on assignColumnsOrder()');
+        $this->pushError('Cannot load the meta data on assignColumnsOrder()');
       } else if (!is_array($cols_order)) {
-        $this->pushError('Cannot assign the columns'
-          .  ' on assignColumnsOrder(%s)', $cols_order);
+        $this->pushError('Cannot assign the columns on assignColumnsOrder(%s)', $cols_order);
       }
+
       if ($this->hasError()) {
         $meta = array();
         $curmeta = array();
@@ -1725,6 +1853,7 @@ class Posql_Builder extends Posql_Parser {
       $meta = array();
       $curmeta = array();
     }
+
     if (!$this->hasError()) {
       $cols_keys = array_keys($cols_order);
       $cols_order = array_values($cols_order);
@@ -1736,6 +1865,7 @@ class Posql_Builder extends Posql_Parser {
               $mod_cols[] = $mcol;
             }
           }
+
           if (!empty($mod_cols)) {
             array_splice($cols_order, $i, 0, $mod_cols);
             $index = array_search($col, $cols_order);
@@ -1750,17 +1880,16 @@ class Posql_Builder extends Posql_Parser {
             $tname = $this->encodeKey($tablename);
             if (!array_key_exists($tname, $meta)) {
               $replaced = false;
-              if (!empty($this->_selectTableAliases)
-                && is_array($this->_selectTableAliases)) {
+              if (!empty($this->_selectTableAliases) && is_array($this->_selectTableAliases)) {
                 foreach ($this->_selectTableAliases as $org_name => $as_name) {
-                  if ($org_name != null && $as_name != null
-                    && $tablename === $as_name) {
+                  if ($org_name != null && $as_name != null && $tablename === $as_name) {
                     if ($this->_fromSubSelect) {
                       $replaced = true;
                       if (empty($this->_subSelectJoinUniqueNames)) {
                         break;
                       }
                     }
+
                     $tablename = $org_name;
                     $tname = $this->encodeKey($tablename);
                     $replaced = true;
@@ -1768,12 +1897,14 @@ class Posql_Builder extends Posql_Parser {
                   }
                 }
               }
+
               if (!$replaced) {
                 $this->pushError('Not exists the table(%s)', $tablename);
                 $cols_order = array();
                 break;
               }
             }
+
             if ($column === '*') {
               $mod_cols = array();
               foreach (array_keys($meta[$tname]) as $tcol) {
@@ -1787,6 +1918,7 @@ class Posql_Builder extends Posql_Parser {
                   }
                 }
               }
+
               if (!empty($mod_cols)) {
                 array_splice($cols_order, $i, 0, $mod_cols);
                 $index = array_search($col, $cols_order);
@@ -1804,8 +1936,7 @@ class Posql_Builder extends Posql_Parser {
                 unset($cols_order[$index]);
               }
             }
-          } else if (!array_key_exists($col, $curmeta)
-            && $this->isExprToken($col)) {
+          } else if (!array_key_exists($col, $curmeta) && $this->isExprToken($col)) {
             $do_expr = true;
             if (!empty($funcs) && is_array($funcs)) {
               foreach ($funcs as $func_name => $func_args) {
@@ -1816,6 +1947,7 @@ class Posql_Builder extends Posql_Parser {
                 }
               }
             }
+
             if ($do_expr) {
               $this->_selectExprCols[$col] = 1;
             }
@@ -1834,13 +1966,13 @@ class Posql_Builder extends Posql_Parser {
    * @return void
    * @access private
    */
-  function applyDistinct(&$rows){
+  function applyDistinct(&$rows) {
     if (!$this->hasError()) {
       if (is_array($rows)) {
         $row_count = count($rows);
         if ($row_count > 1) {
           $removes = array();
-          for ($i = 0; $i < $row_count; ++$i){
+          for ($i = 0; $i < $row_count; ++$i) {
             for ($j = 0; $j < $i; $j++) {
               if (empty($removes[$i]) && $rows[$i] === $rows[$j]) {
                 $removes[$i] = 1;
@@ -1864,11 +1996,12 @@ class Posql_Builder extends Posql_Parser {
    * @return void
    * @access private
    */
-  function removeDistinctToken(&$columns){
+  function removeDistinctToken(&$columns) {
     if (!$this->hasError()) {
       if (is_string($columns)) {
         $columns = $this->splitSyntax($columns);
       }
+
       if (is_array($columns)) {
         $shift = array_shift($columns);
         if (0 !== strcasecmp($shift, 'distinct')) {
@@ -1886,11 +2019,12 @@ class Posql_Builder extends Posql_Parser {
    * @return void
    * @access private
    */
-  function removeSelectListAllClauseToken(&$columns){
+  function removeSelectListAllClauseToken(&$columns) {
     if (!$this->hasError()) {
       if (is_string($columns)) {
         $columns = $this->splitSyntax($columns);
       }
+
       if (is_array($columns)) {
         $shift = array_shift($columns);
         if (0 !== strcasecmp($shift, 'all')) {
@@ -1941,40 +2075,44 @@ class Posql_Builder extends Posql_Parser {
    * @return string  Created HTML TABLE element
    * @access public
    */
-  function toHTMLTable($rows, $caption = null, $attr = 'border="1"'){
+  function toHTMLTable($rows, $caption = null, $attr = 'border="1"') {
     $result = '';
+
     if (!empty($rows) && is_array($rows)) {
       if (!is_array(reset($rows))) {
         $rows = array($rows);
       }
+
       switch (func_num_args()) {
-      case 0:
-      case 1:
-        break;
-      case 2:
-        if (is_array($caption)) {
-          $attr = $caption;
-          $caption = null;
-        }
-        break;
-      case 3:
-        if (is_array($caption)) {
-          $tmp = $attr;
-          $attr = $caption;
-          $caption = $tmp;
-          unset($tmp);
-        }
-        break;
-      default:
-        $args = func_get_args();
-        array_shift($args);
-        $caption = array_shift($args);
-        $attr = array_splice($args, 0);
-        break;
+        case 0:
+        case 1:
+          break;
+        case 2:
+          if (is_array($caption)) {
+            $attr = $caption;
+            $caption = null;
+          }
+          break;
+        case 3:
+          if (is_array($caption)) {
+            $tmp = $attr;
+            $attr = $caption;
+            $caption = $tmp;
+            unset($tmp);
+          }
+          break;
+        default:
+          $args = func_get_args();
+          array_shift($args);
+          $caption = array_shift($args);
+          $attr = array_splice($args, 0);
+          break;
       }
+
       if (!is_array($attr)) {
         $attr = array($attr);
       }
+
       $is_caption = true;
       if (is_string($caption)) {
         //TODO: check more
@@ -1986,8 +2124,7 @@ class Posql_Builder extends Posql_Parser {
           if ($this->isEnableName($eq_left)) {
             $is_caption = false;
           }
-        } else if ($sp_count > 1
-          && $eq_count > 1) {
+        } else if ($sp_count > 1 && $eq_count > 1) {
           if ($sp_count !== $eq_count) {
             $is_caption = false;
           }
@@ -1995,10 +2132,12 @@ class Posql_Builder extends Posql_Parser {
       } else if (is_array($caption)) {
         $is_caption = false;
       }
+
       if (!$is_caption) {
         array_unshift($attr, $caption);
         $caption = null;
       }
+
       $caption = (string)$caption;
       $attr = $this->parseHTMLAttributes($attr);
       if (!empty($attr) && is_array($attr)) {
@@ -2006,6 +2145,7 @@ class Posql_Builder extends Posql_Parser {
       } else {
         $attr = '';
       }
+
       $tables = array();
       $tables[] = sprintf('<table%s>', $attr);
       if ($caption != null) {
@@ -2022,6 +2162,7 @@ class Posql_Builder extends Posql_Parser {
       $rows = array_values($rows);
       $row_count = count($rows);
       $i = 0;
+
       while (--$row_count >= 0) {
         $row = $rows[$i];
         $rows[$i] = null;
@@ -2049,5 +2190,4 @@ class Posql_Builder extends Posql_Parser {
     }
     return $result;
   }
-
 }
