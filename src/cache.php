@@ -7,7 +7,7 @@ require_once dirname(__FILE__) . '/core.php';
  * This class handles the query cache
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet.aqua@gmail.com>
+ * @author    Polygon Planet <polygon.planet.aqua@gmail.com>
  */
 class Posql_Cache extends Posql_Core {
 
@@ -382,5 +382,4 @@ class Posql_Cache extends Posql_Core {
     }
     return $result;
   }
-
 }
