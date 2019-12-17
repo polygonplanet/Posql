@@ -77,8 +77,8 @@
  * The class to configure the variables for Posql
  *
  * @package   Posql
- * @author    polygon planet <polygon.planet.aqua@gmail.com>
- *---------------------------------------------------------------------------*/
+ * @author    Polygon Planet <polygon.planet.aqua@gmail.com>
+ */
 class Posql_Config {
 
   /**

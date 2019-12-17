@@ -135,95 +135,95 @@ class Posql_Charset {
       }
 
       switch (strtoupper(trim($encoding))) {
-      case 'ANSIX341968':
-      case 'ANSIX341986':
-      case 'ASCII':
-      case 'CP367':
-      case 'CSASCII':
-      case 'IBM367':
-      case 'ISO646IRV1991':
-      case 'ISOIR6':
-      case 'ISO646':
-      case 'ISO646US':
-      case 'US':
-      case 'USASCII':
-        $result = 0;
-        break;
-      case 'EUC':
-      case 'EUCJP':
-      case 'EUCJPWIN':
-      case 'EUCJPMS':
-      case 'EUCJPOPEN':
-      case 'XEUCJP':
-        $result = 1;
-        break;
-      case 'CP932':
-      case 'MSKANJI':
-      case 'SJIS':
-      case 'SJISWIN':
-      case 'SJISOPEN':
-      case 'SHIFTJIS':
-      case 'WINDOWS31J':
-      case 'XSJIS':
-        $result = 2;
-        break;
-      case 'ISO2022JP':
-      case 'ISO2022JPMS':
-      case 'JIS':
-        $result = 3;
-        break;
-      case 'CP819':
-      case 'CSISOLATIN1':
-      case 'IBM819':
-      case 'ISO885911987':
-      case 'ISO88591':
-      case 'ISOIR100':
-      case 'L1':
-      case 'LATIN1':
-        $result = 4;
-        break;
-      case 'UTF8':
-        $result = 5;
-        break;
-      case 'UTF16':
-        $result = 6;
-        break;
-      case 'UTF16BE':
-        $result = 7;
-        break;
-      case 'UTF16LE':
-        $result = 8;
-        break;
-      case 'UTF32':
-        $result = 9;
-        break;
-      case 'CNBIG5':
-      case 'CP950':
-      case 'BIG5':
-      case 'BIGFIVE':
-        $result = 10;
-        break;
-      case 'CNGB':
-      case 'EUCCN':
-      case 'GB':
-      case 'GB2312':
-      case 'XEUCCN':
-        $result = 11;
-        break;
-      case 'EUCKR':
-      case 'KSX1001':
-      case 'KSC5601':
-      case 'XEUCKR':
-        $result = 12;
-        break;
-      case 'BIN':
-      case 'BINARY':
-        $result = 13;
-        break;
-      case 'AUTO':
-      default:
-        $result = -1;
-        break;
+        case 'ANSIX341968':
+        case 'ANSIX341986':
+        case 'ASCII':
+        case 'CP367':
+        case 'CSASCII':
+        case 'IBM367':
+        case 'ISO646IRV1991':
+        case 'ISOIR6':
+        case 'ISO646':
+        case 'ISO646US':
+        case 'US':
+        case 'USASCII':
+          $result = 0;
+          break;
+        case 'EUC':
+        case 'EUCJP':
+        case 'EUCJPWIN':
+        case 'EUCJPMS':
+        case 'EUCJPOPEN':
+        case 'XEUCJP':
+          $result = 1;
+          break;
+        case 'CP932':
+        case 'MSKANJI':
+        case 'SJIS':
+        case 'SJISWIN':
+        case 'SJISOPEN':
+        case 'SHIFTJIS':
+        case 'WINDOWS31J':
+        case 'XSJIS':
+          $result = 2;
+          break;
+        case 'ISO2022JP':
+        case 'ISO2022JPMS':
+        case 'JIS':
+          $result = 3;
+          break;
+        case 'CP819':
+        case 'CSISOLATIN1':
+        case 'IBM819':
+        case 'ISO885911987':
+        case 'ISO88591':
+        case 'ISOIR100':
+        case 'L1':
+        case 'LATIN1':
+          $result = 4;
+          break;
+        case 'UTF8':
+          $result = 5;
+          break;
+        case 'UTF16':
+          $result = 6;
+          break;
+        case 'UTF16BE':
+          $result = 7;
+          break;
+        case 'UTF16LE':
+          $result = 8;
+          break;
+        case 'UTF32':
+          $result = 9;
+          break;
+        case 'CNBIG5':
+        case 'CP950':
+        case 'BIG5':
+        case 'BIGFIVE':
+          $result = 10;
+          break;
+        case 'CNGB':
+        case 'EUCCN':
+        case 'GB':
+        case 'GB2312':
+        case 'XEUCCN':
+          $result = 11;
+          break;
+        case 'EUCKR':
+        case 'KSX1001':
+        case 'KSC5601':
+        case 'XEUCKR':
+          $result = 12;
+          break;
+        case 'BIN':
+        case 'BINARY':
+          $result = 13;
+          break;
+        case 'AUTO':
+        default:
+          $result = -1;
+          break;
       }
     }
     return $result;
@@ -270,96 +270,96 @@ class Posql_Charset {
     }
 
     switch ((int)$enc_index) {
-    case 0:
-      $encoding = 'ASCII';
-      $method = 'ASCII';
-      $iconv = 'ASCII';
-      $mbstring = 'ASCII';
-      break;
-    case 1:
-      $encoding = 'EUC-JP';
-      $method = 'EUCJP';
-      $iconv = 'EUC-JP';
-      $mbstring = 'eucJP-win';
-      break;
-    case 2:
-      $encoding = 'SJIS';
-      $method = 'SJIS';
-      $iconv = 'CP932';
-      $mbstring = 'SJIS-win';
-      break;
-    case 3:
-      $encoding = 'JIS';
-      $method = 'JIS';
-      $iconv = 'ISO-2022-JP';
-      $mbstring = 'JIS';
-      break;
-    case 4:
-      $encoding = 'ISO-8859-1';
-      $method = 'LATIN1';
-      $iconv = 'ISO-8859-1';
-      $mbstring = 'ISO-8859-1';
-      break;
-    case 5:
-      $encoding = 'UTF-8';
-      $method = 'UTF8';
-      $iconv = 'UTF-8';
-      $mbstring = 'UTF-8';
-      break;
-    case 6:
-      $encoding = 'UTF-16';
-      $method = 'UTF16';
-      $iconv = 'UTF-16';
-      $mbstring = 'UTF-16';
-      break;
-    case 7:
-      $encoding = 'UTF-16BE';
-      $method = 'UTF16BE';
-      $iconv = 'UTF-16BE';
-      $mbstring = 'UTF-16BE';
-      break;
-    case 8:
-      $encoding = 'UTF-16LE';
-      $method = 'UTF16LE';
-      $iconv = 'UTF-16LE';
-      $mbstring = 'UTF-16LE';
-      break;
-    case 9:
-      $encoding = 'UTF-32';
-      $method = 'UTF32';
-      $iconv = 'UTF-32';
-      $mbstring = 'UTF-32';
-      break;
-    case 10:
-      $encoding = 'BIG5';
-      $method = 'BIG5';
-      $iconv = 'BIG5';
-      $mbstring = 'BIG-5';
-      break;
-    case 11:
-      $encoding = 'EUC-CN';
-      $method = 'GB';
-      $iconv = 'EUC-CN';
-      $mbstring = 'EUC-CN';
-      break;
-    case 12:
-      $encoding = 'EUC-KR';
-      $method = 'EUCKR';
-      $iconv = 'EUC-KR';
-      $mbstring = 'EUC-KR';
-      break;
-    case 13:
-      $encoding = 'Binary';
-      $method = 'Binary';
-      $iconv = 'Binary';
-      $mbstring = 'Binary';
-      break;
-    default:
-      $encoding = $default;
-      $method = $default;
-      $iconv = $default;
-      $mbstring = $default;
-      break;
+      case 0:
+        $encoding = 'ASCII';
+        $method = 'ASCII';
+        $iconv = 'ASCII';
+        $mbstring = 'ASCII';
+        break;
+      case 1:
+        $encoding = 'EUC-JP';
+        $method = 'EUCJP';
+        $iconv = 'EUC-JP';
+        $mbstring = 'eucJP-win';
+        break;
+      case 2:
+        $encoding = 'SJIS';
+        $method = 'SJIS';
+        $iconv = 'CP932';
+        $mbstring = 'SJIS-win';
+        break;
+      case 3:
+        $encoding = 'JIS';
+        $method = 'JIS';
+        $iconv = 'ISO-2022-JP';
+        $mbstring = 'JIS';
+        break;
+      case 4:
+        $encoding = 'ISO-8859-1';
+        $method = 'LATIN1';
+        $iconv = 'ISO-8859-1';
+        $mbstring = 'ISO-8859-1';
+        break;
+      case 5:
+        $encoding = 'UTF-8';
+        $method = 'UTF8';
+        $iconv = 'UTF-8';
+        $mbstring = 'UTF-8';
+        break;
+      case 6:
+        $encoding = 'UTF-16';
+        $method = 'UTF16';
+        $iconv = 'UTF-16';
+        $mbstring = 'UTF-16';
+        break;
+      case 7:
+        $encoding = 'UTF-16BE';
+        $method = 'UTF16BE';
+        $iconv = 'UTF-16BE';
+        $mbstring = 'UTF-16BE';
+        break;
+      case 8:
+        $encoding = 'UTF-16LE';
+        $method = 'UTF16LE';
+        $iconv = 'UTF-16LE';
+        $mbstring = 'UTF-16LE';
+        break;
+      case 9:
+        $encoding = 'UTF-32';
+        $method = 'UTF32';
+        $iconv = 'UTF-32';
+        $mbstring = 'UTF-32';
+        break;
+      case 10:
+        $encoding = 'BIG5';
+        $method = 'BIG5';
+        $iconv = 'BIG5';
+        $mbstring = 'BIG-5';
+        break;
+      case 11:
+        $encoding = 'EUC-CN';
+        $method = 'GB';
+        $iconv = 'EUC-CN';
+        $mbstring = 'EUC-CN';
+        break;
+      case 12:
+        $encoding = 'EUC-KR';
+        $method = 'EUCKR';
+        $iconv = 'EUC-KR';
+        $mbstring = 'EUC-KR';
+        break;
+      case 13:
+        $encoding = 'Binary';
+        $method = 'Binary';
+        $iconv = 'Binary';
+        $mbstring = 'Binary';
+        break;
+      default:
+        $encoding = $default;
+        $method = $default;
+        $iconv = $default;
+        $mbstring = $default;
+        break;
     }
 
     unset($encoding, $method, $iconv, $mbstring);
@@ -634,31 +634,31 @@ class Posql_Charset {
     $result = false;
 
     switch (strtoupper($charset)) {
-    case 'ASCII':
-      $result = $this->isASCII($string);
-      break;
-    case 'JIS':
-    case 'ISO-2022-JP':
-      $result = $this->isJIS($string);
-      break;
-    case 'UTF-16':
-      $result = $this->isUTF16($string);
-      break;
-    case 'UTF-16BE':
-      $result = $this->isUTF16BE($string);
-      break;
-    case 'UTF-16LE':
-      $result = $this->isUTF16LE($string);
-      break;
-    case 'UTF-32':
-      $result = $this->isUTF32($string);
-      break;
-    case 'BINARY':
-      $result = $this->isBinary($string);
-      break;
-    default:
-      $result = $default;
-      break;
+      case 'ASCII':
+        $result = $this->isASCII($string);
+        break;
+      case 'JIS':
+      case 'ISO-2022-JP':
+        $result = $this->isJIS($string);
+        break;
+      case 'UTF-16':
+        $result = $this->isUTF16($string);
+        break;
+      case 'UTF-16BE':
+        $result = $this->isUTF16BE($string);
+        break;
+      case 'UTF-16LE':
+        $result = $this->isUTF16LE($string);
+        break;
+      case 'UTF-32':
+        $result = $this->isUTF32($string);
+        break;
+      case 'BINARY':
+        $result = $this->isBinary($string);
+        break;
+      default:
+        $result = $default;
+        break;
     }
 
     return $result;
@@ -1175,5 +1175,4 @@ class Posql_Charset {
     unset($bytes);
     return $result;
   }
-
 }

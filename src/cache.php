@@ -33,6 +33,7 @@ class Posql_Cache extends Posql_Core {
    */
   function applyQueryCache($table, $query) {
     $result = array();
+
     if ($this->useQueryCache) {
       $is_manip = $this->isManip($query);
       if ($is_manip) {

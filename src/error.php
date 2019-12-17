@@ -1,14 +1,14 @@
 <?php
 require_once dirname(__FILE__) . '/utils.php';
-//-----------------------------------------------------------------------------
+
 /**
  * @name Posql_Error
  *
  * The class raise and generate the errors as stackable exception
  *
  * @package Posql
- * @author  polygon planet <polygon.planet.aqua@gmail.com>
- *---------------------------------------------------------------------------*/
+ * @author  Polygon Planet <polygon.planet.aqua@gmail.com>
+ */
 class Posql_Error extends Posql_Utils {
   /**
    * The error handler for expression
@@ -44,17 +44,20 @@ class Posql_Error extends Posql_Utils {
         $msg = vsprintf($format, $args);
       }
     }
+
     $trace = null;
     if (function_exists('debug_backtrace')) {
       $trace = @debug_backtrace();
     }
+
     if (!is_array($trace)) {
       $trace = array();
     }
+
     $bt = array_pop($trace) + $this->getDefaultBackTrace();
     $code = $this->mapErrorObject($trace);
     $this->errors[] = array(
-      'msg'  => $msg,
+      'msg' => $msg,
       'line' => $bt['line'],
       'file' => $bt['file'],
       'code' => $code
@@ -71,12 +74,12 @@ class Posql_Error extends Posql_Utils {
   function getDefaultBackTrace() {
     $default = array(
       'function' => null,
-      'line'     => __LINE__,
-      'file'     => __FILE__,
-      'class'    => __CLASS__,
-      'object'   => null,
-      'type'     => null,
-      'args'     => array()
+      'line' => __LINE__,
+      'file' => __FILE__,
+      'class' => __CLASS__,
+      'object' => null,
+      'type' => null,
+      'args' => array()
     );
     return $default;
   }

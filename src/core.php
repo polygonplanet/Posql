@@ -2324,5 +2324,4 @@ class Posql_Core extends Posql_Expr {
     }
     unset($df);
   }
-
 }
