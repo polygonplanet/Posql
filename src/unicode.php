@@ -32,7 +32,7 @@ class Posql_Unicode extends Posql_UTF8 {
  * @return number  0 or 1 or -1, if they are equal, it will be returned as 0
  * @access public
  */
- function strcasecmp($string1, $string2){
+ function strcasecmp($string1, $string2) {
    if ($string1 != null && $string2 != null && $string1 != $string2) {
      $string1 = $this->strtolower($string1);
      $string2 = $this->strtolower($string2);
@@ -50,7 +50,7 @@ class Posql_Unicode extends Posql_UTF8 {
  * @return string  the one-character string as Unicode
  * @access public
  */
- function chr($number = null){
+ function chr($number = null) {
    $result = '';
    $argn = func_num_args();
    $args = func_get_args();
@@ -87,7 +87,7 @@ class Posql_Unicode extends Posql_UTF8 {
  * @return number  the numbers of Unicode to be contained
  * @access public
  */
- function ord($string){
+ function ord($string) {
    $result = false;
    $string = $this->substr($string, 0, 1);
    $string = $this->toUnicode($string);
@@ -109,7 +109,7 @@ class Posql_Unicode extends Posql_UTF8 {
  * @return string  the replaced substring, or the empty string
  * @access public
  */
- function substr_replace($string, $replace, $start, $length = 0){
+ function substr_replace($string, $replace, $start, $length = 0) {
    $result = '';
    if ((is_scalar($string)  || $string  === null)
     && (is_scalar($replace) || $replace === null)) {
@@ -131,7 +131,7 @@ class Posql_Unicode extends Posql_UTF8 {
  * @return string  returns the reversed string
  * @access public
  */
- function strrev($string){
+ function strrev($string) {
    $this->setEncoding();
    if ($string != null && strlen($string) > 1) {
      $string = $this->toUTF8($string, true);
@@ -157,7 +157,7 @@ class Posql_Unicode extends Posql_UTF8 {
  *                 from to the corresponding character
  * @access public
  */
- function strtr($string, $from, $to = null){
+ function strtr($string, $from, $to = null) {
    $this->setEncoding();
    if ($string != null) {
      if ($to === null && is_array($from)
@@ -197,7 +197,7 @@ class Posql_Unicode extends Posql_UTF8 {
  * @return string  returns the resulting string
  * @access public
  */
- function ucfirst($string){
+ function ucfirst($string) {
    $string = (string)$string;
    if ($string != null) {
      switch ($this->strlen($string)) {
@@ -234,7 +234,7 @@ class Posql_Unicode extends Posql_UTF8 {
  * @return string  returns the lowercased string
  * @access public
  */
- function strtolower($string){
+ function strtolower($string) {
    $this->setEncoding();
    if ($string != null) {
      $string = $this->toUTF8($string, true);
@@ -262,7 +262,7 @@ class Posql_Unicode extends Posql_UTF8 {
  * @return string  returns the uppercased string
  * @access public
  */
- function strtoupper($string){
+ function strtoupper($string) {
    $this->setEncoding();
    if ($string != null) {
      $string = $this->toUTF8($string, true);
@@ -278,7 +278,7 @@ class Posql_Unicode extends Posql_UTF8 {
  *
  * @access private
  */
- function _strtolower($string){
+ function _strtolower($string) {
    $string = (string)$string;
    if ($string != null) {
      if ($this->hasMBString) {
@@ -306,7 +306,7 @@ class Posql_Unicode extends Posql_UTF8 {
  *
  * @access private
  */
- function _strtoupper($string){
+ function _strtoupper($string) {
    $string = (string)$string;
    if ($string != null) {
      if ($this->hasMBString) {
@@ -344,7 +344,7 @@ class Posql_Unicode extends Posql_UTF8 {
  * @return array   the case mappings as an associate array
  * @access private
  */
- function getCaseMaps($lower = false){
+ function getCaseMaps($lower = false) {
    static $inited = false, $casemaps = array(
    0x0041=>0x0061,0x03A6=>0x03C6,0x0162=>0x0163,0x00C5=>0x00E5,0x0042=>0x0062,
    0x0139=>0x013A,0x00C1=>0x00E1,0x0141=>0x0142,0x038E=>0x03CD,0x0100=>0x0101,
@@ -434,7 +434,7 @@ class Posql_Unicode extends Posql_UTF8 {
  *                 Or FALSE by invalid character.
  * @access public
  */
- function toUnicode($string){
+ function toUnicode($string) {
    $result = array();
    $this->setEncoding();
    $string = $this->toUTF8((string)$string);
@@ -449,7 +449,7 @@ class Posql_Unicode extends Posql_UTF8 {
  *
  * @access private
  */
- function _toUnicode($string){
+ function _toUnicode($string) {
    $result = array();
    if ($string != null && is_scalar($string)) {
      $state = 0;
@@ -540,7 +540,7 @@ class Posql_Unicode extends Posql_UTF8 {
  * @return string  a string which contained as valid UTF-8, or FALSE on error
  * @access public
  */
- function fromUnicode($uni){
+ function fromUnicode($uni) {
    $result = '';
    if (is_array($uni)) {
      $uni = array_values($uni);

@@ -1,6 +1,6 @@
 <?php
 require_once dirname(__FILE__) . '/scan.php';
-//----------------------------------------------------------------------------
+
 /**
  * @name Posql
  *
@@ -21,7 +21,7 @@ require_once dirname(__FILE__) . '/scan.php';
  * @link      https://github.com/polygonplanet/Posql
  * @license   Dual licensed under the MIT and GPL v2 licenses
  * @copyright Copyright (c) 2010-2019 Polygon Planet
- *---------------------------------------------------------------------------*/
+ */
 class Posql extends Posql_Scan {
 
   /**
@@ -59,8 +59,9 @@ class Posql extends Posql_Scan {
    * @return boolean success or not
    * @access public
    */
-  function open($path, $table = null, $fields = array()){
+  function open($path, $table = null, $fields = array()) {
     $result = false;
+
     $this->setPath($path);
     if (!$this->canLockDatabase()) {
       $this->pushError('Cannot open and lock database(%s)', $path);
@@ -70,6 +71,7 @@ class Posql extends Posql_Scan {
       } else {
         $result = $this->isDatabase();
       }
+
       if ($result && $table && $fields) {
         $result = $this->createTable($table, $fields);
         if (!$result && !$this->hasError()) {
@@ -77,9 +79,11 @@ class Posql extends Posql_Scan {
         }
       }
     }
+
     if ($result) {
       $this->init();
     }
+
     return $result;
   }
 
@@ -91,14 +95,16 @@ class Posql extends Posql_Scan {
    * @return boolean success or not
    * @access public
    */
-  function createDatabase($path, $perms = 0666){
+  function createDatabase($path, $perms = 0666) {
     $result = false;
+
     $warn_error = false;
     if ($this->_ifExistsClause !== 'if_not_exists') {
       $warn_error = true;
     }
     $this->setPath($path);
     clearstatcache();
+
     if (@is_file($this->path)) {
       if ($warn_error) {
         $this->pushError('Already exists the database(%s)', $this->getPath());
@@ -120,16 +126,19 @@ class Posql extends Posql_Scan {
             ''
           )
         );
+
         if ($this->fputs($fp, $head)) {
           $this->meta = $meta;
           $result = true;
         }
+
         fclose($fp);
         $mask = @umask(0);
         @chmod($this->path, $perms);
         @umask($mask);
       }
     }
+
     return $result;
   }
 
@@ -142,82 +151,93 @@ class Posql extends Posql_Scan {
    * @return boolean success or not
    * @access public
    */
-   function createTable($table, $fields = array(), $primary_key = null){
-     $result = false;
-     $this->_onCreate   = true;
-     $this->_getMetaAll = true;
-     $this->getMeta();
-     if (!is_string($table)) {
-       $this->pushError('Only string type is enabled as arguments(%s)', $table);
-       $table = null;
-     }
-     $tname = $this->encodeKey($table);
-     if (isset($this->meta[$tname])) {
-       if (!empty($this->_useQuery)
-        && $this->_ifExistsClause !== 'if_not_exists') {
-         $this->pushError('Already exists the table(%s)', $table);
-       }
-     } else {
-       if (!$this->isEnableName($table)) {
-         $error_token = (string)$table;
-         $this->pushError('Invalid table name(%s)', $error_token);
-       } else if (!is_array($fields)
-               || !$this->isAssoc($fields)) {
-         $this->pushError('Only associatable array is enabled');
-       } else {
-         foreach (array_keys($fields) as $field) {
-           if (!$this->isEnableName($field)) {
-             $this->pushError('Invalid field name(%s)', $field);
-             break;
-           }
-         }
-         if (!$this->hasError()) {
-           if (!is_string($primary_key)
-            || !array_key_exists($primary_key, $fields)) {
-             $primary_key = null;
-           }
-           $fields = $this->mergeDefaults($fields);
-           $meta = $this->encode($fields);
-           if (strlen($meta) > $this->MAX) {
-             $this->pushError('Over the maximum length on fields');
-           } else {
-             $this->meta[$tname] = $fields;
-             $posql_key = $this->getClassKey();
-             if (empty($this->meta[$posql_key])) {
-               $this->meta[$posql_key] = array();
-             }
-             $create_query = null;
-             if (!empty($this->_useQuery) && !empty($this->lastQuery)
-              && !empty($this->lastMethod) && $this->lastMethod === 'create') {
-               $create_query = $this->lastQuery;
-             }
-             $this->meta[$posql_key][$tname] = array(
-               'sql'     => $create_query,
-               'primary' => $primary_key
-             );
-             $this->tableName = $tname;
-             $meta = $this->encode($this->meta);
-             if ($this->lockExAll()) {
-               $lock = sprintf('%s:%d@%s#%010.0f@%010u;',
-                 $tname, 0, $this->toUniqId(0), 1, time());
-               if ($this->appendFileLine($this->getPath(), $lock, 2)
-                && $this->replaceFileLine($this->getPath(), $meta, 3)) {
-                 $result = true;
-               }
-               $this->unlockAll();
-             }
-           }
-         }
-       }
-     }
-     $posql_key = $this->getClassKey();
-     if (isset($this->meta[$posql_key])) {
-       unset($this->meta[$posql_key]);
-     }
-     $this->_onCreate   = null;
-     $this->_getMetaAll = null;
-     return $result;
-   }
+  function createTable($table, $fields = array(), $primary_key = null) {
+    $result = false;
+
+    $this->_onCreate = true;
+    $this->_getMetaAll = true;
+    $this->getMeta();
+
+    if (!is_string($table)) {
+      $this->pushError('Only string type is enabled as arguments(%s)', $table);
+      $table = null;
+    }
+
+    $tname = $this->encodeKey($table);
+    if (isset($this->meta[$tname])) {
+      if (!empty($this->_useQuery)
+       && $this->_ifExistsClause !== 'if_not_exists') {
+        $this->pushError('Already exists the table(%s)', $table);
+      }
+    } else {
+      if (!$this->isEnableName($table)) {
+        $error_token = (string)$table;
+        $this->pushError('Invalid table name(%s)', $error_token);
+      } else if (!is_array($fields)
+              || !$this->isAssoc($fields)) {
+        $this->pushError('Only associatable array is enabled');
+      } else {
+        foreach (array_keys($fields) as $field) {
+          if (!$this->isEnableName($field)) {
+            $this->pushError('Invalid field name(%s)', $field);
+            break;
+          }
+        }
+
+        if (!$this->hasError()) {
+          if (!is_string($primary_key)
+           || !array_key_exists($primary_key, $fields)) {
+            $primary_key = null;
+          }
+
+          $fields = $this->mergeDefaults($fields);
+          $meta = $this->encode($fields);
+
+          if (strlen($meta) > $this->MAX) {
+            $this->pushError('Over the maximum length on fields');
+          } else {
+            $this->meta[$tname] = $fields;
+            $posql_key = $this->getClassKey();
+            if (empty($this->meta[$posql_key])) {
+              $this->meta[$posql_key] = array();
+            }
+
+            $create_query = null;
+            if (!empty($this->_useQuery) && !empty($this->lastQuery)
+             && !empty($this->lastMethod) && $this->lastMethod === 'create') {
+              $create_query = $this->lastQuery;
+            }
+
+            $this->meta[$posql_key][$tname] = array(
+              'sql' => $create_query,
+              'primary' => $primary_key
+            );
+            $this->tableName = $tname;
+            $meta = $this->encode($this->meta);
+
+            if ($this->lockExAll()) {
+              $lock = sprintf('%s:%d@%s#%010.0f@%010u;', $tname, 0, $this->toUniqId(0), 1, time());
+              if ($this->appendFileLine($this->getPath(), $lock, 2)
+               && $this->replaceFileLine($this->getPath(), $meta, 3)) {
+                $result = true;
+              }
+              $this->unlockAll();
+            }
+          }
+        }
+      }
+    }
+
+    $posql_key = $this->getClassKey();
+    if (isset($this->meta[$posql_key])) {
+      unset($this->meta[$posql_key]);
+    }
+
+    $this->_onCreate = null;
+    $this->_getMetaAll = null;
+
+    return $result;
+  }
 
   /**
    * Registers a "regular" User Defined Function(UDF) for use in SQL statements
@@ -227,8 +247,9 @@ class Posql extends Posql_Scan {
    * @return boolean   success or failure
    * @access public
    */
-  function createFunction($funcname, $callback){
+  function createFunction($funcname, $callback) {
     $result = false;
+
     if ($funcname != null && is_string($funcname)
      && $callback != null && isset($this->UDF) && is_array($this->UDF)) {
       if (!is_callable($callback)) {
@@ -248,6 +269,7 @@ class Posql extends Posql_Scan {
       $funcname = (string)$funcname;
       $this->pushError('Failed to create function(%s)', $funcname);
     }
+
     return $result;
   }
 
@@ -260,15 +282,18 @@ class Posql extends Posql_Scan {
    * @return boolean success or not
    * @access public
    */
-  function dropDatabase($path = null, $force = false){
+  function dropDatabase($path = null, $force = false) {
     $result = false;
+
     if ($path) {
       $this->setPath($path);
     }
+
     if ($this->isDatabase()) {
       while (!$force && $this->isLockAll()) {
         $this->sleep();
       }
+
       $result = @unlink($this->path);
       if (!$result) {
         if ($this->_ifExistsClause !== 'if_exists') {
@@ -278,6 +303,7 @@ class Posql extends Posql_Scan {
         $this->autoVacuum = false;
       }
     }
+
     return $result;
   }
 
@@ -288,18 +314,19 @@ class Posql extends Posql_Scan {
    * @return boolean success or not
    * @access public
    */
-  function dropTable($table){
+  function dropTable($table) {
     $result = false;
     $warn_error = false;
-    if (!empty($this->_useQuery)
-     && !empty($this->lastMethod)
-     && $this->lastMethod === 'drop'
-     && $this->_ifExistsClause !== 'if_exists') {
+
+    if (!empty($this->_useQuery) && !empty($this->lastMethod)
+     && $this->lastMethod === 'drop' && $this->_ifExistsClause !== 'if_exists') {
       $warn_error = true;
     }
+
     $this->_getMetaAll = true;
     $this->getMeta();
     $tname = $this->encodeKey($table);
+
     if (empty($this->meta[$tname])) {
       if ($warn_error) {
         $this->pushError('Not exists the table(%s)', $table);
@@ -307,12 +334,12 @@ class Posql extends Posql_Scan {
       $result = false;
     } else {
       if ($this->lockExAll()) {
-        if (($rp = $this->fopen('r'))
-         && ($wp = $this->fopen('r+'))) {
+        if (($rp = $this->fopen('r')) && ($wp = $this->fopen('r+'))) {
           $head = $this->fgets($rp);
           $lock = $this->fgets($rp);
           $pos = ftell($rp);
           $re = sprintf('|%s:\d@\w{8}#\d+@\d+;|', preg_quote($tname));
+
           if (!preg_match($re, $lock, $match)) {
             if ($warn_error) {
               $this->pushError('Already dropped the table(%s)', $table);
@@ -324,14 +351,17 @@ class Posql extends Posql_Scan {
             $meta = $this->meta;
             unset($meta[$tname]);
             $posql_key = $this->getClassKey();
+
             if (isset($meta[$posql_key][$tname])) {
               unset($meta[$posql_key][$tname]);
             }
+
             fseek($wp, strlen($head) + strpos($lock, $match[0]));
             $this->fputs($wp, str_repeat(' ', strlen($match[0])));
             fseek($wp, $pos);
             $this->fputs($wp, $this->encode($meta));
             fseek($rp, ftell($wp));
+
             while (!feof($rp)) {
               $c = fgetc($rp);
               if ($c === $this->NL || $c === false) {
@@ -340,9 +370,11 @@ class Posql extends Posql_Scan {
                 $this->fputs($wp, ' ');
               }
             }
+
             fseek($wp, ftell($rp));
             $tnamep = $tname . $this->DELIM_TABLE;
             $tlen = strlen($tnamep);
+
             while (!feof($rp)) {
               $line = $this->fgets($rp);
               $trim = trim($line);
@@ -354,6 +386,7 @@ class Posql extends Posql_Scan {
                 $this->fgets($wp);
               }
             }
+
             fclose($rp);
             fclose($wp);
             unset($this->meta[$tname]);
@@ -367,6 +400,7 @@ class Posql extends Posql_Scan {
         $this->unlockAll();
       }
     }
+
     $this->_getMetaAll = null;
     return $result;
   }
@@ -374,7 +408,7 @@ class Posql extends Posql_Scan {
   /**
    * @access public
    */
-  function alterTable($table, $action){
+  function alterTable($table, $action) {
     //TODO: Implements or emulate
     $this->pushError('Not implemented command (ALTER TABLE)');
   }
@@ -387,17 +421,18 @@ class Posql extends Posql_Scan {
    * @return number  number of affected rows
    * @access public
    */
-  function insert($table, $rows = array()){
+  function insert($table, $rows = array()) {
     $result = 0;
     if ($table != null && !empty($rows) && is_array($rows)) {
       if (!array_key_exists(0, $rows)) {
         $rows = array($rows);
       }
+
       $rows = array_map(array($this, 'mergeDefaults'), $rows);
       $this->_curMeta = $this->getMeta($table);
       $this->next = $this->getNextId($table);
-      if (!$this->hasError()
-       && $this->_curMeta !== false && $this->next !== false) {
+
+      if (!$this->hasError() && $this->_curMeta !== false && $this->next !== false) {
         $tname = $this->tableName = $this->encodeKey($table);
         if (empty($this->meta[$tname])) {
           $this->pushError('Cannot insert to the table(%s)', $table);
@@ -408,21 +443,26 @@ class Posql extends Posql_Scan {
                 $repeat = false;
                 $nextid = $this->getNextId($table);
                 $new_rows = array_map(array(&$this, '_addMap'), $rows);
+
                 if (1 !== $this->math->comp($this->next, $nextid)) {
                   // 1 ::= $this->next > $nextid
                   $repeat = true;
                 }
+
                 if ($this->hasError()) {
                   $repeat = false;
                 }
               } while ($repeat);
+
               unset($rows);
               $this->_execExpr = false;
+
               if (!$this->hasError()) {
                 if ($this->fputs($fp, implode('', $new_rows))) {
                   $result = count($new_rows);
                 }
               }
+
               fclose($fp);
               unset($new_rows);
               if (!$this->hasError()) {
@@ -434,6 +474,7 @@ class Posql extends Posql_Scan {
         }
       }
     }
+
     return $result;
   }
 
@@ -447,11 +488,13 @@ class Posql extends Posql_Scan {
    * @return number  number of affected rows
    * @access public
    */
-  function update($table, $row = array(), $expr = true){
+  function update($table, $row = array(), $expr = true) {
     $result = 0;
+
     if (!is_array($row)) {
       $this->pushError('Invalid type of the records(%s). Must an array.', $row);
     }
+
     if (!$this->hasError()) {
       $this->getMeta($table);
       $tname = $this->tableName = $this->encodeKey($table);
@@ -462,19 +505,23 @@ class Posql extends Posql_Scan {
         $this->pushError('Not exists the table(%s)', $table);
       }
     }
+
     if (!$this->hasError()) {
       if ($this->lockExAll()) {
         if ($fp = $this->fopen('r')) {
           $this->fseekLine($fp, 2);
+
           if ($up = $this->fopen('r+')) {
             $this->fseekLine($up, 2);
             $delim = $this->DELIM_TABLE;
             $ups = array();
             $first = true;
+
             while (!feof($fp)) {
               $isup = false;
               $line = $this->fgets($fp);
               $trim = trim($line);
+
               if ($trim == null) {
                 $this->fputs($up, $line);
                 continue;
@@ -499,6 +546,7 @@ class Posql extends Posql_Scan {
                   }
                 }
               }
+
               if ($isup) {
                 $put = str_repeat(' ', strlen($trim)) . $this->NL;
                 if ($this->fputs($up, $put)) {
@@ -509,17 +557,21 @@ class Posql extends Posql_Scan {
                 $this->fgets($up);
               }
             }
+
             if (!empty($ups) && empty($this->_inDelete)) {
               $this->_curMeta = $row;
               $this->tableName = $tname;
               $maps = array_map(array(&$this, '_upMap'), $ups);
               $this->_execExpr = false;
+
               if ($this->hasError()) {
                 $maps = array_map(array(&$this, '_upRestoreMap'), $ups);
                 $result = 0;
               }
+
               $this->fputs($up, implode('', $maps));
             }
+
             unset($maps, $ups);
             fclose($up);
             if ($result) {
@@ -531,6 +583,7 @@ class Posql extends Posql_Scan {
         $this->unlockAll();
       }
     }
+
     return $result;
   }
 
@@ -542,7 +595,7 @@ class Posql extends Posql_Scan {
    * @return number  number of affected rows
    * @access public
    */
-  function delete($table, $expr = false){
+  function delete($table, $expr = false) {
     $this->_inDelete = true;
     $result = $this->update($table, array(), $expr);
     $this->_inDelete = null;
@@ -560,15 +613,17 @@ class Posql extends Posql_Scan {
    * @return number  number of affected rows
    * @access public
    */
-  function replace($table, $row = array()){
+  function replace($table, $row = array()) {
     $result = 0;
     if ($table != null && is_array($row)) {
       if (array_key_exists(0, $row)) {
         $this->pushError('Array of one dimension must be given REPLACE.');
       }
+
       $expr = null;
       $meta = null;
       $insert_only = false;
+
       if (!$this->hasError()) {
         $meta = $this->getMeta($table);
         if (!isset($this->_primaryKey) || $this->_primaryKey == null) {
@@ -588,16 +643,17 @@ class Posql extends Posql_Scan {
           }
         }
       }
+
       if (!$this->hasError()) {
         if ($insert_only) {
           $result = $this->insert($table, $row);
         } else {
-          if ($expr == null || $meta == null
-           || !is_array($meta) || !isset($this->_primaryKey)
-           || !array_key_exists($this->_primaryKey, $row)) {
+          if ($expr == null || $meta == null || !is_array($meta)
+           || !isset($this->_primaryKey) || !array_key_exists($this->_primaryKey, $row)) {
             $this->pushError('Failed to REPLACE INTO the table.');
           } else {
             $row = $row + $meta;
+
             if ($this->_execExpr) {
               foreach ($row as $key => $val) {
                 if (!$this->isValidExpr($val)) {
@@ -606,11 +662,13 @@ class Posql extends Posql_Scan {
                 }
               }
             }
+
             if (array_key_exists('rowid', $row)) {
               $row['rowid'] = $row[$this->_primaryKey];
             } else {
               $this->pushError('Invalid the records, expect (rowid).');
             }
+
             if (!$this->hasError()) {
               $result = $this->update($table, $row, $expr) * 2;
             }
@@ -634,26 +692,28 @@ class Posql extends Posql_Scan {
    * @return Posql_Statement Posql_Statement object which has the result-set
    * @access public
    */
-  function select($table, $columns = '*', $expr = true,
-                          $group = null,  $having = true,
-                          $order = null,  $limit  = null){
+  function select($table, $columns = '*', $expr = true, $group = null,
+                  $having = true, $order = null,  $limit = null) {
     $result = array();
+
     if (is_array($table) && func_num_args() === 1) {
       $args = $table;
     } else {
       $args = func_get_args();
     }
     $args = $this->parseSelectArguments($args, true);
+
     if (!empty($args) && is_array($args)) {
-      $table   = reset($args);
+      $table = reset($args);
       $tbl_key = key($args);
       $columns = next($args);
-      $expr    = next($args);
-      $group   = next($args);
-      $having  = next($args);
-      $order   = next($args);
-      $limit   = end($args);
+      $expr = next($args);
+      $group = next($args);
+      $having = next($args);
+      $order = next($args);
+      $limit = end($args);
     }
+
     $this->applyAliasNames($table, $columns);
     if ($this->isSimpleCount($args)) {
       $count = $this->count($table, $expr);
@@ -664,18 +724,16 @@ class Posql extends Posql_Scan {
       // Thanks 5974
       $this->getMeta();
       $table = $this->replaceTableAlias($table);
+
       if (isset($tbl_key)) {
         $args[$tbl_key] = $table;
       }
       $tname = $this->tableName = $this->encodeKey($table);
-      /*
-      if (!is_bool($expr)) {
-        $expr = $this->validExpr($expr);
-      }
-      */
+
       if (empty($this->meta[$tname])) {
         $this->pushError('Not exists the table(%s)', $table);
       }
+
       if (!$this->hasError()) {
         if ($this->lockSh($table)) {
           $result = $this->applyOptimizeExplain($args);
@@ -686,16 +744,19 @@ class Posql extends Posql_Scan {
             } else {
               $aggregates = null;
             }
+
             if ($having !== true) {
               $aggregates = $this->having($result, $having,
                                           $group, $aggregates);
             }
+
             if ($columns == null) {
               $result = array();
             } else {
               $this->assignCols($result, $columns,
                                 $aggregates, $group, $order);
             }
+
             if (count($result) > 1 && $limit != null) {
               $this->assignLimitOffset($result, $limit);
             }
@@ -703,12 +764,15 @@ class Posql extends Posql_Scan {
         }
       }
     }
+
     if ($this->hasError()) {
       $result = array();
     }
+
     if (is_array($result) && empty($this->_fromStatement)) {
       $result = new Posql_Statement($this, $result);
     }
+
     return $result;
   }
 
@@ -726,27 +790,28 @@ class Posql extends Posql_Scan {
    * @return Posql_Statement Posql_Statement object which has the result-set
    * @access public
    */
-  function multiSelect($tables,
-                       $columns = '*', $expr = true,
-                       $group = null,  $having = true,
-                       $order = null,  $limit  = null){
+  function multiSelect($tables, $columns = '*', $expr = true, $group = null,
+                       $having = true, $order = null, $limit = null) {
     $result = array();
+
     if (is_array($tables) && func_num_args() === 1) {
       $args = $tables;
     } else {
       $args = func_get_args();
     }
     $args = $this->parseSelectArguments($args, true);
+
     if (!empty($args) && is_array($args)) {
-      $tables  = reset($args);
+      $tables = reset($args);
       $columns = next($args);
-      $expr    = next($args);
-      $group   = next($args);
-      $having  = next($args);
-      $order   = next($args);
-      $limit   = end($args);
+      $expr = next($args);
+      $group = next($args);
+      $having = next($args);
+      $order = next($args);
+      $limit = end($args);
     }
     $this->applyAliasNames($tables, $columns);
+
     if ($this->isSimpleCount($args, true)) {
       $count = $this->multiCount($tables, $expr);
       $this->assignColsBySimpleCount($result, $count, $columns);
@@ -756,8 +821,10 @@ class Posql extends Posql_Scan {
         if (!is_array($tables)) {
           $tables = $this->parseJoinTables($tables);
         }
+
         $tnames = array();
         $tables = array_values($tables);
+
         foreach ($tables as $i => $table) {
           $oname = $this->getValue($table, 'table_name');
           $tname = $this->encodeKey($oname);
@@ -766,19 +833,23 @@ class Posql extends Posql_Scan {
           }
           $tnames[$tname] = 1;
         }
+
         if (!is_bool($expr)) {
           $this->_onMultiSelect = true;
           $expr = $this->validExpr($expr);
           $this->_onMultiSelect = null;
         }
+
         if (empty($this->meta[$this->tableName])) {
           $this->pushError('Not exists the table(%s)', $this->tableName);
         }
+
         if (!$this->hasError()) {
           if ($this->lockShAll()) {
             if ($fp = $this->fopen('r')) {
               $this->fseekLine($fp, 3);
               $delim = $this->DELIM_TABLE;
+
               while (!feof($fp)) {
                 $line = $this->fgets($fp);
                 if (strpos($line, $delim)) {
@@ -794,6 +865,7 @@ class Posql extends Posql_Scan {
               fclose($fp);
             }
             $this->unlockAll();
+
             if (!$this->hasError() && !empty($result)) {
               $this->joinTables($result, $tables, $expr);
               if ($group != null) {
@@ -801,12 +873,13 @@ class Posql extends Posql_Scan {
               } else {
                 $aggregates = null;
               }
+
               if ($having !== true) {
                 $this->_onMultiSelect = true;
-                $aggregates = $this->having($result, $having,
-                                            $group, $aggregates);
+                $aggregates = $this->having($result, $having, $group, $aggregates);
                 $this->_onMultiSelect = null;
               }
+
               if ($columns === '*') {
                 $this->removeCorrelations($result);
               } else {
@@ -814,11 +887,11 @@ class Posql extends Posql_Scan {
                   $result = array();
                 } else {
                   $this->_onMultiSelect = true;
-                  $this->assignCols($result, $columns,
-                                    $aggregates, $group, $order);
+                  $this->assignCols($result, $columns, $aggregates, $group, $order);
                   $this->_onMultiSelect = null;
                 }
               }
+
               if (count($result) > 1 && $limit != null) {
                 $this->assignLimitOffset($result, $limit);
               }
@@ -827,12 +900,15 @@ class Posql extends Posql_Scan {
         }
       }
     }
+
     if ($this->hasError()) {
       $result = array();
     }
+
     if (is_array($result) && empty($this->_fromStatement)) {
       $result = new Posql_Statement($this, $result);
     }
+
     return $result;
   }
 
@@ -851,40 +927,45 @@ class Posql extends Posql_Scan {
    * @return Posql_Statement Posql_Statement object which has the result-set
    * @access public
    */
-  function subSelect($rows,  $columns = '*', $expr = true,
-                             $group = null,  $having = true,
-                             $order = null,  $limit  = null){
+  function subSelect($rows, $columns = '*', $expr = true, $group = null,
+                     $having = true, $order = null, $limit = null) {
     $result = array();
+
     if (is_array($rows) && func_num_args() === 1) {
       $args = $rows;
     } else {
       $args = func_get_args();
     }
     $args = $this->parseSelectArguments($args, true);
+
     if (!empty($args) && is_array($args)) {
-      $rows    = reset($args);
+      $rows = reset($args);
       $columns = next($args);
-      $expr    = next($args);
-      $group   = next($args);
-      $having  = next($args);
-      $order   = next($args);
-      $limit   = end($args);
+      $expr = next($args);
+      $group = next($args);
+      $having = next($args);
+      $order = next($args);
+      $limit = end($args);
     }
+
     if (!$this->hasError()) {
       if (!is_bool($expr)) {
         $expr = $this->validExpr($expr);
       }
+
       if (!$this->hasError()) {
         if (is_array($rows) && !empty($rows)) {
           $result = array();
           $first = true;
           $row_count = count($rows);
+
           while (--$row_count >= 0) {
             $row = array_shift($rows);
             if (!is_array($row)) {
               $this->pushError('Invalid result-set using subquery');
               break;
             }
+
             if ($first) {
               if ($this->safeExpr($row, $expr)) {
                 $result[] = $row;
@@ -899,6 +980,7 @@ class Posql extends Posql_Scan {
               }
             }
           }
+
           if ($this->hasError()) {
             $result = array();
           } else {
@@ -907,16 +989,17 @@ class Posql extends Posql_Scan {
             } else {
               $aggregates = null;
             }
+
             if ($having !== true) {
-              $aggregates = $this->having($result, $having,
-                                          $group, $aggregates);
+              $aggregates = $this->having($result, $having, $group, $aggregates);
             }
+
             if ($columns == null) {
               $result = array();
             } else {
-              $this->assignCols($result, $columns,
-                                $aggregates, $group, $order);
+              $this->assignCols($result, $columns, $aggregates, $group, $order);
             }
+
             if (count($result) > 1 && $limit != null) {
               $this->assignLimitOffset($result, $limit);
             }
@@ -924,13 +1007,16 @@ class Posql extends Posql_Scan {
         }
       }
     }
+
     unset($rows);
     if ($this->hasError()) {
       $result = array();
     }
+
     if (is_array($result) && empty($this->_fromStatement)) {
       $result = new Posql_Statement($this, $result);
     }
+
     $this->_subSelectMeta = array();
     $this->_fromSubSelect = null;
     return $result;
@@ -951,29 +1037,31 @@ class Posql extends Posql_Scan {
    * @return Posql_Statement Posql_Statement object which has the result-set
    * @access public
    */
-  function multiSubSelect($tables,
-                          $columns = '*', $expr = true,
-                          $group = null,  $having = true,
-                          $order = null,  $limit  = null){
+  function multiSubSelect($tables, $columns = '*', $expr = true, $group = null,
+                          $having = true, $order = null, $limit = null) {
     $result = array();
+
     if (is_array($tables) && func_num_args() === 1) {
       $args = $tables;
     } else {
       $args = func_get_args();
     }
     $args = $this->parseSelectArguments($args, true);
+
     if (!empty($args) && is_array($args)) {
-      $tables  = reset($args);
+      $tables = reset($args);
       $columns = next($args);
-      $expr    = next($args);
-      $group   = next($args);
-      $having  = next($args);
-      $order   = next($args);
-      $limit   = end($args);
+      $expr = next($args);
+      $group = next($args);
+      $having = next($args);
+      $order = next($args);
+      $limit = end($args);
     }
+
     if (!is_array($tables)) {
       $this->pushError('Invalid result-set using subquery');
     }
+
     if (!$this->hasError()) {
       $tnames = array();
       foreach (array_keys($tables) as $i => $identifier) {
@@ -983,12 +1071,15 @@ class Posql extends Posql_Scan {
         }
         $tnames[$tname] = 1;
       }
+
       $this->applyAliasNames($this->_subSelectJoinInfo, $columns);
+
       if (!is_bool($expr)) {
         $this->_onMultiSelect = true;
         $expr = $this->validExpr($expr);
         $this->_onMultiSelect = null;
       }
+
       if (!$this->hasError()) {
         if (!empty($tables)) {
           $result = array();
@@ -996,10 +1087,12 @@ class Posql extends Posql_Scan {
             $i = 0;
             $delim = $this->DELIM_TABLE;
             $table_count = count($tables);
+
             while (--$table_count >= 0) {
               reset($tables);
               $key = $this->encodeKey(key($tables));
               $rows = array_shift($tables);
+
               if (is_string($rows) && $rows === '<=>') {
                 if ($fp = $this->fopen('r')) {
                   $this->fseekLine($fp, 3);
@@ -1019,6 +1112,7 @@ class Posql extends Posql_Scan {
                 }
               } else if (is_array($rows)) {
                 $row_count = count($rows);
+
                 while (--$row_count >= 0) {
                   $row = array_shift($rows);
                   if (!is_array($row)) {
@@ -1028,6 +1122,7 @@ class Posql extends Posql_Scan {
                   $result[$key][] = $row;
                 }
               }
+
               if ($this->hasError()) {
                 break;
               }
@@ -1035,6 +1130,7 @@ class Posql extends Posql_Scan {
             }
             $this->unlockAll();
           }
+
           unset($rows);
           if ($this->hasError()) {
             $result = array();
@@ -1045,12 +1141,13 @@ class Posql extends Posql_Scan {
             } else {
               $aggregates = null;
             }
+
             if ($having !== true) {
               $this->_onMultiSelect = true;
-              $aggregates = $this->having($result, $having,
-                                          $group, $aggregates);
+              $aggregates = $this->having($result, $having, $group, $aggregates);
               $this->_onMultiSelect = null;
             }
+
             if ($columns === '*') {
               $this->removeCorrelations($result);
             } else {
@@ -1058,10 +1155,10 @@ class Posql extends Posql_Scan {
                 $result = array();
               } else {
                 $this->_onMultiSelect = true;
-                $this->assignCols($result, $columns,
-                                  $aggregates, $group, $order);
+                $this->assignCols($result, $columns, $aggregates, $group, $order);
                 $this->_onMultiSelect = null;
               }
+
               if (count($result) > 1 && $limit != null) {
                 $this->assignLimitOffset($result, $limit);
               }
@@ -1070,16 +1167,20 @@ class Posql extends Posql_Scan {
         }
       }
     }
+
     if ($this->hasError()) {
       $result = array();
     }
+
     if (is_array($result) && empty($this->_fromStatement)) {
       $result = new Posql_Statement($this, $result);
     }
+
     $this->_subSelectMeta = array();
     $this->_fromSubSelect = null;
     $this->_subSelectJoinUniqueNames = array();
     $this->_subSelectJoinInfo = array();
+
     return $result;
   }
 
@@ -1096,22 +1197,26 @@ class Posql extends Posql_Scan {
    * @return Posql_Statement Posql_Statement object which has the result-set
    * @access public
    */
-  function selectDual($select = null, $expr  = true,
-                      $group  = null, $having = true,
-                      $order  = null, $limit = null){
+  function selectDual($select = null, $expr = true, $group = null,
+                      $having = true, $order = null, $limit = null) {
     $result = array();
+
     $this->_isDualSelect = true;
     if ($select !== null) {
       $result = array(array());
       $this->assignDualCols($result, $select);
     }
+
     $this->_isDualSelect = null;
+
     if ($this->hasError()) {
       $result = array();
     }
+
     if (is_array($result) && empty($this->_fromStatement)) {
       $result = new Posql_Statement($this, $result);
     }
+
     return $result;
   }
 
@@ -1123,21 +1228,24 @@ class Posql extends Posql_Scan {
    * @return number  number of the counted rows
    * @access public
    */
-  function count($table, $expr = true){
+  function count($table, $expr = true) {
     $result = 0;
     $table = $this->replaceTableAlias($table);
     $tname = $this->tableName = $this->encodeKey($table);
+
     if ($table != null) {
       $this->getMeta($table);
       if (!is_bool($expr)) {
         $expr = $this->validExpr($expr);
       }
+
       if (!$this->hasError()) {
         if ($this->lockSh($table)) {
           if ($fp = $this->fopen('r')) {
             $this->fseekLine($fp, 3);
             if ($expr === true) {
               $top = $tname . $this->DELIM_TABLE;
+
               while (!feof($fp)) {
                 $line = $this->fgets($fp, true);
                 if ($line != null && strpos($line, $top) === 0) {
@@ -1147,6 +1255,7 @@ class Posql extends Posql_Scan {
             } else {
               $delim = $this->DELIM_TABLE;
               $first = true;
+
               while (!feof($fp)) {
                 $line = $this->fgets($fp);
                 if (strpos($line, $delim)) {
@@ -1179,6 +1288,7 @@ class Posql extends Posql_Scan {
         }
       }
     }
+
     return $result;
   }
 
@@ -1191,15 +1301,18 @@ class Posql extends Posql_Scan {
    * @return number  number of the counted rows
    * @access public
    */
-  function multiCount($tables, $expr = true){
+  function multiCount($tables, $expr = true) {
     $result = 0;
     $this->getMeta();
+
     if (!$this->hasError() && $tables != null) {
       if (!is_array($tables)) {
         $tables = $this->parseJoinTables($tables);
       }
+
       $tnames = array();
       $tables = array_values($tables);
+
       foreach ($tables as $i => $table) {
         $oname = $this->getValue($table, 'table_name');
         $tname = $this->encodeKey($oname);
@@ -1209,14 +1322,17 @@ class Posql extends Posql_Scan {
         }
         $tnames[$tname] = 1;
       }
+
       if (!is_bool($expr)) {
         $this->_onMultiSelect = true;
         $expr = $this->validExpr($expr);
         $this->_onMultiSelect = null;
       }
+
       if (empty($this->meta[$this->tableName])) {
         $this->pushError('Not exists the table(%s)', $this->tableName);
       }
+
       if (!$this->hasError()) {
         if ($this->lockShAll()) {
           $rows = array();
@@ -1224,6 +1340,7 @@ class Posql extends Posql_Scan {
             $this->fseekLine($fp, 3);
             $delim = $this->DELIM_TABLE;
             $first = true;
+
             while (!feof($fp)) {
               $line = $this->fgets($fp);
               if (strpos($line, $delim)) {
@@ -1251,7 +1368,9 @@ class Posql extends Posql_Scan {
             }
             fclose($fp);
           }
+
           $this->unlockAll();
+
           if ($this->hasError() || empty($rows)) {
             $result = 0;
           } else {
@@ -1264,6 +1383,7 @@ class Posql extends Posql_Scan {
         }
       }
     }
+
     return $result;
   }
 
@@ -1275,8 +1395,9 @@ class Posql extends Posql_Scan {
    * @return boolean success or failure
    * @access public
    */
-  function vacuum(){
+  function vacuum() {
     $result = false;
+
     if ($this->lockExAll()) {
       if ($rp = $this->fopen('r')) {
         $this->fseekLine($rp, 1);
@@ -1285,6 +1406,7 @@ class Posql extends Posql_Scan {
           $pos = ftell($rp);
           $line = $this->fgets($rp);
           $move = true;
+
           if (trim($line) == null) {
             $move = false;
             if ($this->_inTransaction) {
@@ -1292,24 +1414,27 @@ class Posql extends Posql_Scan {
             }
           }
           fseek($rp, $pos);
-          if (!empty($this->meta)
-           && $this->meta === array(array())) {
+
+          if (!empty($this->meta) && $this->meta === array(array())) {
             $result = true;
           } else {
             if ($move) {
               fseek($rp, -1, SEEK_CUR);
               fseek($wp, -1, SEEK_CUR);
             }
-            $nl  = $this->base16Encode($this->NL, '\x');
-            $re  = sprintf('<[%s]{2,}>', $nl);
-            $rm  = array(' ', "\t", "\x00");
+
+            $nl = $this->base16Encode($this->NL, '\x');
+            $re = sprintf('<[%s]{2,}>', $nl);
+            $rm = array(' ', "\t", "\x00");
             $buf = null;
+
             while (!feof($rp)) {
               $buf = fread($rp, 0x2000);
               $buf = str_replace($rm, '', $buf);
               $buf = preg_replace($re, $this->NL, $buf);
               $this->fputs($wp, $buf);
             }
+
             if (isset($buf) && substr($buf, -1) !== $this->NL) {
               $this->fputs($wp, $this->NL);
             }
@@ -1322,6 +1447,7 @@ class Posql extends Posql_Scan {
       }
       $this->unlockAll();
     }
+
     return $result;
   }
 
@@ -1337,8 +1463,9 @@ class Posql extends Posql_Scan {
    * @return array   the information as array
    * @access public
    */
-  function describe($table = null){
+  function describe($table = null) {
     $result = array();
+
     if ($table == null) {
       $result = $this->getTableInfo();
     } else if (!is_string($table)) {
@@ -1347,11 +1474,12 @@ class Posql extends Posql_Scan {
       $meta = $this->getMeta();
       if (!$this->hasError() && is_array($meta)) {
         $meta = array_filter($meta);
+
         if (!empty($meta) && is_array($meta)) {
           $database = $this->getDatabaseName();
           $table_key = $this->encodeKey($table);
-          if (strtolower($table) === 'database'
-           || strcasecmp($table, $database) === 0) {
+
+          if (strtolower($table) === 'database' || strcasecmp($table, $database) === 0) {
             $result = $this->getTableInfo();
           } else {
             if (array_key_exists($table_key, $meta)) {
@@ -1360,33 +1488,37 @@ class Posql extends Posql_Scan {
               $create_sql  = $this->getValue($defs, 'sql');
               $primary_key = $this->getValue($defs, 'primary');
               $definition  = array();
+
               if ($create_sql != null) {
                 $definition = $this->parseCreateTableQuerySimple($create_sql);
               }
+
               if (!$this->hasError() && is_array($definition)) {
                 $result = array();
                 foreach ($meta as $name => $default) {
-                  $type  = '';
-                  $key   = '';
+                  $type = '';
+                  $key = '';
                   $extra = '';
-                  if (array_key_exists($name, $definition)
-                   && array_key_exists('type', $definition[$name])) {
+
+                  if (array_key_exists($name, $definition) && array_key_exists('type', $definition[$name])) {
                     $type = $definition[$name]['type'];
                   } else {
                     $type = $this->defaultDataType;
                   }
+
                   if ($name === 'rowid') {
-                    $key   = 'primary';
+                    $key = 'primary';
                     $extra = 'auto_increment';
                   } else if ($name === $primary_key) {
                     $extra = $this->getExtraAliasMessage();
                   }
+
                   $result[] = array(
-                    'name'    => $name,
-                    'type'    => $type,
-                    'key'     => $key,
+                    'name' => $name,
+                    'type' => $type,
+                    'key' => $key,
                     'default' => $default,
-                    'extra'   => $extra
+                    'extra' => $extra
                   );
                 }
               }
@@ -1395,9 +1527,11 @@ class Posql extends Posql_Scan {
         }
       }
     }
+
     if (is_array($result) && empty($this->_fromStatement)) {
       $result = new Posql_Statement($this, $result);
     }
+
     return $result;
   }
 
@@ -1410,8 +1544,9 @@ class Posql extends Posql_Scan {
    * @return number  the number of affected rows
    * @access public
    */
-  function exec($query){
+  function exec($query) {
     $result = 0;
+
     if ($this->isManip($query)) {
       if ($this->isMultiQuery($query)) {
         $result = $this->multiQuery($query);
@@ -1428,6 +1563,7 @@ class Posql extends Posql_Scan {
       }
       $result = (int)$result;
     }
+
     return $result;
   }
 
@@ -1446,8 +1582,9 @@ class Posql extends Posql_Scan {
    * @return mixed  results of the query
    * @access public
    */
-  function query($query){
+  function query($query) {
     $result = false;
+
     if ($this->isMultiQuery($query)) {
       $result = $this->multiQuery($query);
     } else {
@@ -1458,17 +1595,20 @@ class Posql extends Posql_Scan {
         if (!empty($this->lastMethod)) {
           $type = $this->lastMethod;
         }
+
         if ($this->useQueryCache) {
           $table = $this->getTableNameFromTokens($parsed, $type);
           $result = $this->applyQueryCache($table, $query);
         } else {
           $result = $this->buildQuery($parsed, $type);
         }
+
         if (is_array($result) && empty($this->_fromStatement)) {
           $result = new Posql_Statement($this, $result, $query);
         }
       }
     }
+
     return $result;
   }
 
@@ -1548,13 +1688,15 @@ class Posql extends Posql_Scan {
    * @return mixed        results of the query
    * @access public
    */
-  function queryf($query){
+  function queryf($query) {
     $result = false;
     $args = func_get_args();
     $query = call_user_func_array(array(&$this, 'formatQueryString'), $args);
+
     if (!$this->hasError()) {
       $result = $this->query($query);
     }
+
     return $result;
   }
 
@@ -1588,19 +1730,23 @@ class Posql extends Posql_Scan {
    * @return number  number of affected rows
    * @access public
    */
-  function multiQuery($query){
+  function multiQuery($query) {
     $result = 0;
+
     if (!is_array($query)) {
       $query = $this->parseMultiQuery($query);
     }
+
     if (is_array($query)) {
       $len = count($query);
+
       while (--$len >= 0) {
         $sql = array_shift($query);
         if (!is_string($sql)) {
           $this->pushError('Must be given only one dimensional array');
           break;
         }
+
         $result += (int)$this->exec($sql);
         if ($this->hasError()) {
           //XXX: rollBack(); Should do?
@@ -1609,6 +1755,7 @@ class Posql extends Posql_Scan {
         }
       }
     }
+
     return $result;
   }
 
@@ -1623,7 +1770,7 @@ class Posql extends Posql_Scan {
    * @return string  quoted string that is safe to pass into an SQL statement
    * @access public
    */
-  function quote($string, $type = null){
+  function quote($string, $type = null) {
     $string = $this->formatQueryString('%a', $string);
     return $string;
   }
@@ -1635,7 +1782,7 @@ class Posql extends Posql_Scan {
    * @return Posql_Statement  the instance of Posql_Statement object
    * @access public
    */
-  function prepare($query){
+  function prepare($query) {
     $result = new Posql_Statement($this, null, $query);
     return $result;
   }
@@ -1659,14 +1806,16 @@ class Posql extends Posql_Scan {
    * @return boolean  success or failure
    * @access public
    */
-  function transaction($mode){
+  function transaction($mode) {
     $result = false;
+
     if (!$this->hasError()) {
       if (!is_string($mode)) {
         $mode = gettype($mode);
       } else {
         $mode = trim($mode);
       }
+
       switch (strtolower($mode)) {
         case 'begin':
         case 'start':
@@ -1676,21 +1825,26 @@ class Posql extends Posql_Scan {
               if (!$this->lockExAllTables()) {
                 $this->pushError('Failed to begin the transaction');
               }
+
               if ($this->hasError()) {
                 $this->unlockAllTables();
               } else {
                 $this->lockDatabase();
+
                 $rp = $this->fopen('r');
                 if ($rp) {
                   $this->fseekLine($rp, 1);
+
                   $wp = $this->fopen('r+');
                   if ($wp) {
                     $this->fseekLine($wp, 1);
+
                     while (!feof($wp)) {
                       $this->fgets($wp);
                     }
                     $trans_name = $this->getTransactionKey();
                     $delim = $this->DELIM_TABLE;
+
                     while (!feof($rp)) {
                       $line = $this->fgets($rp, true);
                       if ($line != null) {
@@ -1714,18 +1868,19 @@ class Posql extends Posql_Scan {
             break;
         case 'commit':
         case 'end':
-            if (empty($this->_inTransaction)
-             || empty($this->_transactionName)) {
+            if (empty($this->_inTransaction) || empty($this->_transactionName)) {
               $this->pushError('Unable to commit the transaction');
             } else {
               $rp = $this->fopen('r');
               if ($rp) {
                 $this->fseekLine($rp, 3);
+
                 $wp = $this->fopen('r+');
                 if ($wp) {
                   $this->fseekLine($wp, 3);
                   $trans_name = $this->_transactionName;
                   $delim = $this->DELIM_TABLE;
+
                   while (!feof($rp)) {
                     $wrote = false;
                     $line = $this->fgets($rp, true);
@@ -1737,6 +1892,7 @@ class Posql extends Posql_Scan {
                         $wrote = true;
                       }
                     }
+
                     if (!$wrote) {
                       $this->fgets($wp);
                     }
@@ -1746,6 +1902,7 @@ class Posql extends Posql_Scan {
                 }
                 fclose($rp);
               }
+
               for ($i = 0; $i < 2; $i++) {
                 $this->vacuum();
               }
@@ -1756,16 +1913,17 @@ class Posql extends Posql_Scan {
             }
             break;
         case 'rollback':
-            if (empty($this->_inTransaction)
-             || empty($this->_transactionName)) {
+            if (empty($this->_inTransaction) || empty($this->_transactionName)) {
               $this->pushError('Unable to rollback the transaction');
             } else {
               $rp = $this->fopen('r');
               if ($rp) {
                 $this->fseekLine($rp, 1);
+
                 $wp = $this->fopen('r+');
                 if ($wp) {
                   $this->fseekLine($wp, 1);
+
                   $ap = $this->fopen('a');
                   if ($ap) {
                     $tp = $this->fopen('r');
@@ -1779,16 +1937,19 @@ class Posql extends Posql_Scan {
                         $end_symbol,
                         $this->NL
                       );
+
                       $end_point_trim = trim($end_point);
                       $this->fputs($ap, $end_point);
                       $transaction_exists = false;
                       $nl_length = (-strlen($this->NL));
+
                       while (!feof($tp)) {
                         $line = $this->fgets($tp, true);
                         if ($line != null) {
                           if ($line === $end_point_trim) {
                             break;
                           }
+
                           if (strpos($line, $delim) !== false) {
                             list($key, $data) = explode($delim, $line);
                             if (strpos($key, $trans_name) === 0) {
@@ -1802,9 +1963,11 @@ class Posql extends Posql_Scan {
                           }
                         }
                       }
+
                       if (!$transaction_exists) {
                         $this->pushError('Not exists the transaction data');
                       }
+
                       while (!feof($rp)) {
                         $line = $this->fgets($rp, true);
                         if ($line != null) {
@@ -1814,6 +1977,7 @@ class Posql extends Posql_Scan {
                             $this->fputs($wp, $line);
                             break;
                           }
+
                           $size = strlen($line);
                           $line = str_repeat(' ', $size) . $this->NL;
                           $this->fputs($wp, $line);
@@ -1821,6 +1985,7 @@ class Posql extends Posql_Scan {
                           $this->fgets($wp);
                         }
                       }
+
                       fclose($tp);
                       $result = true;
                     }
@@ -1830,6 +1995,7 @@ class Posql extends Posql_Scan {
                 }
                 fclose($rp);
               }
+
               for ($i = 0; $i < 2; $i++) {
                 $this->vacuum();
               }
@@ -1844,6 +2010,7 @@ class Posql extends Posql_Scan {
             break;
       }
     }
+
     return $result;
   }
 
@@ -1856,7 +2023,7 @@ class Posql extends Posql_Scan {
    * @return boolean  success or failure
    * @access public
    */
-  function beginTransaction(){
+  function beginTransaction() {
     $result = $this->transaction('begin');
     return $result;
   }
@@ -1870,7 +2037,7 @@ class Posql extends Posql_Scan {
    * @return boolean  success or failure
    * @access public
    */
-  function commit(){
+  function commit() {
     $result = $this->transaction('commit');
     return $result;
   }
@@ -1884,7 +2051,7 @@ class Posql extends Posql_Scan {
    * @return boolean  success or failure
    * @access public
    */
-  function rollBack(){
+  function rollBack() {
     $result = $this->transaction('rollback');
     return $result;
   }
@@ -1901,7 +2068,7 @@ class Posql extends Posql_Scan {
    * @return number  the value to inserted "rowid" or NULL
    * @access public
    */
-  function lastInsertId(){
+  function lastInsertId() {
     $result = $this->getLastInsertId();
     return $result;
   }
@@ -1928,8 +2095,7 @@ class Posql extends Posql_Scan {
    *                      - limit       : number limit of SELECT statement
    * @access public
    */
-  function getPager($total_count = null, $curpage = null,
-                    $perpage     = null, $range   = null){
+  function getPager($total_count = null, $curpage = null, $perpage = null, $range = null) {
     $result = new Posql_Pager();
     $result->setPager($total_count, $curpage, $perpage, $range);
     return $result;

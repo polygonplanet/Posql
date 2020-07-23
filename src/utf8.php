@@ -100,7 +100,7 @@ class Posql_UTF8 {
  *
  * @access public
  */
- function __destruct(){
+ function __destruct() {
    unset($this->pcharset, $this->charset);
    foreach (get_object_vars($this) as $prop => $val) {
      if ($prop != null) {
@@ -116,7 +116,7 @@ class Posql_UTF8 {
  * @return void
  * @access private
  */
- function _referProperty(&$posql){
+ function _referProperty(&$posql) {
    $this->charset = & $posql->charset;
    $this->pcharset = & $posql->pcharset;
    $this->supportsUTF8PCRE = & $posql->supportsUTF8PCRE;
@@ -129,7 +129,7 @@ class Posql_UTF8 {
  * @return void
  * @access private
  */
- function init(){
+ function init() {
    if (empty($this->_inited)) {
      $this->hasMBString = false;
      $this->hasIConv = false;
@@ -164,7 +164,7 @@ class Posql_UTF8 {
  * @return string   the validated string as UTF-8
  * @access private
  */
- function toUTF8($string, $save_org = false){
+ function toUTF8($string, $save_org = false) {
    $string = (string)$string;
    if ($string != null && !is_numeric($string)) {
      $to = 'UTF-8';
@@ -185,7 +185,7 @@ class Posql_UTF8 {
  * @return string   the encoded string as original encoding
  * @access private
  */
- function fromUTF8($string, $before = null){
+ function fromUTF8($string, $before = null) {
    $string = (string)$string;
    if ($string != null && !is_numeric($string)) {
      if (!empty($this->_orgCharset)
@@ -221,7 +221,7 @@ class Posql_UTF8 {
  * @return void
  * @access private
  */
- function setEncoding(){
+ function setEncoding() {
    if ($this->hasMBString) {
      $this->prevMBStringEncoding = mb_internal_encoding();
      mb_internal_encoding('UTF-8');
@@ -241,7 +241,7 @@ class Posql_UTF8 {
  * @return void
  * @access private
  */
- function restoreEncoding(){
+ function restoreEncoding() {
    if ($this->hasMBString && $this->prevMBStringEncoding != null) {
      mb_internal_encoding($this->prevMBStringEncoding);
      $this->prevMBStringEncoding = null;
@@ -262,7 +262,7 @@ class Posql_UTF8 {
  * @return number  the length of the string
  * @access public
  */
- function strlen($string){
+ function strlen($string) {
    $result = 0;
    $this->setEncoding();
    $string = $this->toUTF8($string);
@@ -283,7 +283,7 @@ class Posql_UTF8 {
  * @return number  the numeric position of the first occurrence, or FALSE
  * @access public
  */
- function strpos($string, $search, $offset = 0){
+ function strpos($string, $search, $offset = 0) {
    $result = false;
    $this->setEncoding();
    if ($string !== '' && $search !== '' && $offset >= 0) {
@@ -307,7 +307,7 @@ class Posql_UTF8 {
  * @return number   the numeric position of the first occurrence, or FALSE
  * @access public
  */
- function strrpos($string, $search, $offset = null){
+ function strrpos($string, $search, $offset = null) {
    $result = false;
    $this->setEncoding();
    if ($string !== '' && $search !== '' && $offset >= 0) {
@@ -344,7 +344,7 @@ class Posql_UTF8 {
  * @return string  a cut part of the substring, or the empty string
  * @access public
  */
- function substr($string, $offset, $length = null){
+ function substr($string, $offset, $length = null) {
    $result = '';
    $this->setEncoding();
    if ($string !== '' && $length !== 0) {
@@ -361,7 +361,7 @@ class Posql_UTF8 {
  *
  * @access private
  */
- function _strlen($string){
+ function _strlen($string) {
    $result = 0;
    if ($this->hasMBString) {
      $result = mb_strlen($string);
@@ -378,7 +378,7 @@ class Posql_UTF8 {
  *
  * @access private
  */
- function _strpos($string, $search, $offset = 0){
+ function _strpos($string, $search, $offset = 0) {
    $result = false;
    if ($string !== '' && $search !== '' && $offset >= 0) {
      if ($this->hasMBString) {
@@ -418,7 +418,7 @@ class Posql_UTF8 {
  *
  * @access private
  */
- function _strrpos($string, $search, $offset = null){
+ function _strrpos($string, $search, $offset = null) {
    $result = false;
    if ($string !== '' && $search !== '' && $offset >= 0) {
      if ($offset - 0 !== 0) {
@@ -456,7 +456,7 @@ class Posql_UTF8 {
  *
  * @access private
  */
- function _substr($string, $offset, $length = null){
+ function _substr($string, $offset, $length = null) {
    $result = '';
    if ($string !== '' && $length !== 0) {
      if ($this->hasMBString) {
