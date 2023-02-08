@@ -11,7 +11,7 @@ PEAR::DB, PEAR::MDB2, CakePHP 用ドライバがあり PDO と互換性がある
 
 ## Docs
 
-https://polygonpla.net/posql/
+https://polygonpla.net/app/posql/
 
 ## Note
 
